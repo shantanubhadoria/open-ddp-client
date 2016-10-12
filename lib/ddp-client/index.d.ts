@@ -8,15 +8,15 @@ export declare class DDPClient {
     private ddpVersion;
     private supportedDDPVersions;
     private callStack;
-    private instantiated;
     private connected;
     private sendMessageCallbacks;
     constructor();
-    stringify(): string;
     onConnect(): void;
     onMessageReceived(message: string): void;
     onError(error: Error): void;
     onClose(): void;
     onMessageSend(callback: Function): void;
-    private sendConnectionInitializationMessages();
+    private sendConnectMessage();
+    private resumeLoginWithToken();
+    private dispatchBufferedCallStack();
 }

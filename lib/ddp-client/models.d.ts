@@ -3,4 +3,8 @@ export interface IKeyValueStore {
     set: Function;
 }
 export interface IDDPMessage {
+    msg?: string;
+    version?: string;
+    support?: string[];
+    session?: string;
 }

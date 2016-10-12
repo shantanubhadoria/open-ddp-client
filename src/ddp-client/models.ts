@@ -9,4 +9,8 @@ enum DDPMessageType {
 }
 
 export interface IDDPMessage {
+  msg?: string;
+  version?: string;
+  support?: string[];
+  session?: string;
 }

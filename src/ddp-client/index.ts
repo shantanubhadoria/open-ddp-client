@@ -15,21 +15,23 @@ export class DDPClient {
 
   private ddpVersion = "1";
   private supportedDDPVersions = ["1", "pre2", "pre1"];
-  private callStack: Array<any> = [];
+  private callStack: Array<IDDPMessage> = [];
 
-  private instantiated: boolean = false;
   private connected: boolean = false;
 
-  private sendMessageCallbacks: Array<Function> = [];
+  private sendMessageCallback: Function;
+  private messageReceivedCallback: Function;
+  private errorCallback: Function;
+  private closeCallback: Function;
 
   constructor() {
-    let observable = Rx.Observable.create();
+    let observable = Rx.Observable.create((obs: Rx.Observer<IDDPMessage>) => {
+      this.messageReceivedCallback = obs.next.bind(obs);
+    });
     let observer = {
       next: (message: IDDPMessage) => {
           if (this.connected) {
-            this.sendMessageCallbacks.forEach((callback) => {
-              callback(message);
-            });
+            this.sendMessageCallback(EJSON.stringify(message));
           } else {
             this.callStack.push(message);
           }
@@ -40,11 +42,13 @@ export class DDPClient {
 
   public onConnect() {
     this.connected = true;
-    this.sendConnectionInitializationMessages();
+    this.sendConnectMessage();
+    this.resumeLoginWithToken();
+    this.dispatchBufferedCallStack();
   }
 
   public onMessageReceived(message: string) {
-    this.subject.next(message);
+    this.subject.next(EJSON.parse(message));
   }
 
   public onError(error: Error) {
@@ -52,16 +56,38 @@ export class DDPClient {
   }
 
   public onClose() {
+    this.connected = false;
     this.subject.complete();
   }
 
   public onMessageSend(callback: Function) {
-    this.sendMessageCallbacks.push(callback);
+    this.sendMessageCallback = callback;
   }
 
-  private sendConnectionInitializationMessages() {
-    this.subject.next(EJSON.stringify({
-      
-    }));
+  private sendConnectMessage() {
+    let connectRequest: IDDPMessage = {
+      msg: "connect",
+      support: this.supportedDDPVersions,
+      version: this.ddpVersion,
+    };
+    let sessionId = this.keyValueStore.get("DDPSessionId");
+    if (sessionId) {
+      connectRequest.session = sessionId;
+    }
+    this.subject.next(connectRequest);
+  }
+
+  private resumeLoginWithToken() {
+    let loginToken = this.keyValueStore.get("LoginToken");
+    if (loginToken) {
+      // Accounts.loginWithToken(loginToken);
+    }
+  }
+
+  private dispatchBufferedCallStack() {
+    this.callStack.forEach((message: IDDPMessage) => {
+      this.sendMessageCallback(EJSON.stringify(message));
+    });
+    this.callStack = [];
   }
 }
