@@ -8,6 +8,9 @@
     "preserveConstEnums": true,
     "removeComments": true
   },
+  "files": [
+    "typings/index.d.ts"
+  ],
   "include": [
     "src/**/*"
   ],
