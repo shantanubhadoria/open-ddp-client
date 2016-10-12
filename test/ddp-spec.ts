@@ -24,6 +24,7 @@ describe("ddpclient", () => {
   it("Should give on connect message on calling onConnect", (done) => {
     const ddpClient = DDPClient.Instance();
     ddpClient.onMessageSend((message: any) => {
+      console.log(message);
       done();
     });
     ddpClient.onConnect();

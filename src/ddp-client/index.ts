@@ -1,4 +1,5 @@
 import { IDDPMessage, IKeyValueStore } from "./models";
+import * as EJSON from "ejson";
 
 import * as Rx from "rxjs/Rx";
 
@@ -39,6 +40,7 @@ export class DDPClient {
 
   public onConnect() {
     this.connected = true;
+    this.sendConnectionInitializationMessages();
   }
 
   public onMessageReceived(message: string) {
@@ -55,5 +57,11 @@ export class DDPClient {
 
   public onMessageSend(callback: Function) {
     this.sendMessageCallbacks.push(callback);
+  }
+
+  private sendConnectionInitializationMessages() {
+    this.subject.next(EJSON.stringify({
+      
+    }));
   }
 }

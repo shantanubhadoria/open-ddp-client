@@ -12,9 +12,11 @@ export declare class DDPClient {
     private connected;
     private sendMessageCallbacks;
     constructor();
+    stringify(): string;
     onConnect(): void;
     onMessageReceived(message: string): void;
     onError(error: Error): void;
     onClose(): void;
     onMessageSend(callback: Function): void;
+    private sendConnectionInitializationMessages();
 }
