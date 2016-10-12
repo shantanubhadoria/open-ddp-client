@@ -9,7 +9,10 @@ export declare class DDPClient {
     private supportedDDPVersions;
     private callStack;
     private connected;
-    private sendMessageCallbacks;
+    private sendMessageCallback;
+    private messageReceivedCallback;
+    private errorCallback;
+    private closeCallback;
     constructor();
     onConnect(): void;
     onMessageReceived(message: string): void;
