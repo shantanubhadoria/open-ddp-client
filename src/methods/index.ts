@@ -36,6 +36,7 @@ export default class Methods {
     resultCallback?: Function,
     updatedCallback?: Function
   ) {
+    console.log(method);
     let methodId = new ObjectId();
 
     let methodCallMessage: IDDPMessageMethodCall = {
@@ -45,19 +46,22 @@ export default class Methods {
       params,
     };
 
-    this.resultCallbacks.set(methodId.toHexString(), {
-      id: methodId.toHexString(),
-      method,
-      params,
-      resultCallback,
-    });
-    this.updatedCallbacks.set(methodId.toHexString(), {
-      id: methodId.toHexString(),
-      method,
-      params,
-      updatedCallback,
-    });
-
+    if (resultCallback) {
+      this.resultCallbacks.set(methodId.toHexString(), {
+        id: methodId.toHexString(),
+        method,
+        params,
+        resultCallback,
+      });
+    }
+    if (updatedCallback) {
+      this.updatedCallbacks.set(methodId.toHexString(), {
+        id: methodId.toHexString(),
+        method,
+        params,
+        updatedCallback,
+      });
+    }
     this.ddpClient.observer.next(methodCallMessage);
 
     return methodId.toHexString();

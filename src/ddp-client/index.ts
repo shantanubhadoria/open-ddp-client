@@ -27,34 +27,35 @@ export default class DDPClient implements IDDPClient {
     this.subject = new Rx.Subject();
 
     this.observer = {
-      next: (message: IDDPMessage) => {
+      next: (msgObj: IDDPMessage) => {
           if (
             this.reauthAttempted
-            || this.connectedDDP && message.msg === "login"
-            || this.connected && message.msg === "connect"
+            || this.connectedDDP && msgObj.msg === "login"
+            || this.connected && msgObj.msg === "connect"
           ) {
-            this.sendMessageCallback(EJSON.stringify(message));
+            this.sendMessageCallback(EJSON.stringify(msgObj));
           } else {
-            this.callStack.push(message);
+            this.callStack.push(msgObj);
           }
       },
     };
-  }
 
-  public onConnect() {
-    this.connected = true;
-    this.sendConnectMessage();
-
+    // Trigger on connected message callbacks
     this.subject
-    .filter((message: IDDPMessage) => message.msg === "connected")
-    .subscribe((connectedMessage: IDDPMessage) => {
+    .filter((msgObj: IDDPMessage) => msgObj.msg === "connected")
+    .subscribe((msgObj: IDDPMessage) => {
       this.connectedDDP = true;
-      this.keyValueStore.set("DDPSessionId", connectedMessage.session);
+      this.keyValueStore.set("DDPSessionId", msgObj.session);
       this.resumeLoginWithToken(() => {
         this.reauthAttempted = true;
         this.dispatchBufferedCallStack();
       });
     });
+  }
+
+  public onConnect() {
+    this.connected = true;
+    this.sendConnectMessage();
   }
 
   public messageReceivedCallback(message: string): void {

@@ -13,7 +13,6 @@ describe("ddp methods call without params", () => {
   it("send a message on ddp", (done) => {
     ddpClient.sendMessageCallback = (message: string) => {
       let msgObj = EJSON.parse(message);
-        console.log(message);
       if(msgObj.msg === "method") {
         expect(msgObj.method).to.equal("testMethod");
         expect(msgObj.id).to.be.a("string");
@@ -22,9 +21,9 @@ describe("ddp methods call without params", () => {
       }
     };
     ddpClient.onConnect();
-    ddpClient.messageReceivedCallback(connectedMessage);
+    ddpClient.messageReceivedCallback('{"msg":"connected", "session": "testSessionIDr"}');
     
-    methods.call("testMethod");
+    methods.call("testMethod1");
   });
 });
 
