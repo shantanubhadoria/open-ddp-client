@@ -13,24 +13,34 @@ export class DDPClient {
   public subject: Rx.Subject<IDDPMessage>;
   public keyValueStore: IKeyValueStore;
 
+  public sendMessageCallback: Function;
+  public messageReceivedCallback: Function;
+  public errorCallback: Function;
+  public closeCallback: Function;
+
   private ddpVersion = "1";
   private supportedDDPVersions = ["1", "pre2", "pre1"];
   private callStack: Array<IDDPMessage> = [];
 
   private connected: boolean = false;
-
-  private sendMessageCallback: Function;
-  private messageReceivedCallback: Function;
-  private errorCallback: Function;
-  private closeCallback: Function;
+  private connectedDDP: boolean = false;
+  private reauthAttempted: boolean = false;
 
   constructor() {
     let observable = Rx.Observable.create((obs: Rx.Observer<IDDPMessage>) => {
-      this.messageReceivedCallback = obs.next.bind(obs);
+      this.messageReceivedCallback = (message: string) => {
+        obs.next(EJSON.parse(message));
+      };
+      this.errorCallback = obs.error.bind(obs);
+      this.closeCallback = obs.complete.bind(obs);
     });
     let observer = {
       next: (message: IDDPMessage) => {
-          if (this.connected) {
+          if (
+            this.reauthAttempted
+            || this.connectedDDP && message.msg === "login"
+            || this.connected && message.msg === "connect"
+          ) {
             this.sendMessageCallback(EJSON.stringify(message));
           } else {
             this.callStack.push(message);
@@ -43,25 +53,17 @@ export class DDPClient {
   public onConnect() {
     this.connected = true;
     this.sendConnectMessage();
-    this.resumeLoginWithToken();
-    this.dispatchBufferedCallStack();
-  }
 
-  public onMessageReceived(message: string) {
-    this.subject.next(EJSON.parse(message));
-  }
-
-  public onError(error: Error) {
-    this.subject.error(error);
-  }
-
-  public onClose() {
-    this.connected = false;
-    this.subject.complete();
-  }
-
-  public onMessageSend(callback: Function) {
-    this.sendMessageCallback = callback;
+    this.subject
+    .filter((message: IDDPMessage) => message.msg === "connected")
+    .subscribe((connectedMessage: IDDPMessage) => {
+      this.connectedDDP = true;
+      this.keyValueStore.set("DDPSessionId", connectedMessage.session);
+      this.resumeLoginWithToken(() => {
+        this.reauthAttempted = true;
+        this.dispatchBufferedCallStack();
+      });
+    });
   }
 
   private sendConnectMessage() {
@@ -77,10 +79,12 @@ export class DDPClient {
     this.subject.next(connectRequest);
   }
 
-  private resumeLoginWithToken() {
+  private resumeLoginWithToken(callback: Function) {
     let loginToken = this.keyValueStore.get("LoginToken");
     if (loginToken) {
-      // Accounts.loginWithToken(loginToken);
+      // Accounts.loginWithToken(loginToken, callback);
+    } else {
+      callback();
     }
   }
 

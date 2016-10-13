@@ -21,22 +21,24 @@ ws.onConnect(() => {
 
 // message: string
 ws.onMessage((message) => {
-  ddpClient.onMessageReceived(message);
+  ddpClient.messageReceivedCallback(message);
 });
 
 // error: object with error, reason and code keys.
 ws.onError((error) => {
-  ddpClient.onError(error);
+  ddpClient.errorCallback(error);
 });
 
 ws.onClose(() => {
-  ddpClient.onClose();
+  ddpClient.closeCallback();
 });
 
 // Attach a handler for handle sending messages from the ddp client
-ddpClient.onMessageSend = (message) => {
+ddpClient.sendMessageCallback = (message) => { 
   ws.send(message);
 };
+// Since ws object also takes a single message string as param this could be simply replaced with this
+ddpClient.sendMessageCallback = ws.send;
 ```
 
 # Using this module in other modules

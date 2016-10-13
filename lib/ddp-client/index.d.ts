@@ -5,21 +5,19 @@ export declare class DDPClient {
     private static instance;
     subject: Rx.Subject<IDDPMessage>;
     keyValueStore: IKeyValueStore;
+    sendMessageCallback: Function;
+    messageReceivedCallback: Function;
+    errorCallback: Function;
+    closeCallback: Function;
     private ddpVersion;
     private supportedDDPVersions;
     private callStack;
     private connected;
-    private sendMessageCallback;
-    private messageReceivedCallback;
-    private errorCallback;
-    private closeCallback;
+    private connectedDDP;
+    private reauthAttempted;
     constructor();
     onConnect(): void;
-    onMessageReceived(message: string): void;
-    onError(error: Error): void;
-    onClose(): void;
-    onMessageSend(callback: Function): void;
     private sendConnectMessage();
-    private resumeLoginWithToken();
+    private resumeLoginWithToken(callback);
     private dispatchBufferedCallStack();
 }

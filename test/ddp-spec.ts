@@ -27,14 +27,14 @@ describe("Reconnect without previous session", () => {
   let ddpClient = DDPClient.Instance();
   it("Should send a connect msg on establishing websocket connection", (done) => {
     ddpClient.keyValueStore = new Map();
-    ddpClient.onMessageSend((message: any) => {
+    ddpClient.sendMessageCallback = (message: any) => {
       let msgObj = EJSON.parse(message);
       if(msgObj.msg === "connect") {
         expect(msgObj.version).to.be.a("string");
         expect(msgObj.support).to.be.a("array");
         done();
       }
-    });
+    };
     ddpClient.onConnect();
   });
 });
@@ -44,7 +44,7 @@ describe("Reconnect with previous session", () => {
   it("Should resend a session id if present in key store", (done) => {
     ddpClient.keyValueStore = new Map();
     ddpClient.keyValueStore.set("DDPSessionId", "sessionIDForTest");
-    ddpClient.onMessageSend((message: any) => {
+    ddpClient.sendMessageCallback = (message: any) => {
       let msgObj = EJSON.parse(message);
       if(msgObj.msg === "connect") {
         expect(msgObj.version).to.be.a("string");
@@ -52,19 +52,19 @@ describe("Reconnect with previous session", () => {
         expect(msgObj.session).to.equal("sessionIDForTest");
         done();
       }
-    });
+    };
     ddpClient.onConnect();
   });
 });
 
-describe("On subject", () => {
+describe("Subject", () => {
   it("should trigger next on message received", () => {
     let ddpClient = DDPClient.Instance();
     ddpClient.keyValueStore = new Map();
-    ddpClient.subject.subscribe((message) => {
-      console.log(EJSON.stringify(message));
+    ddpClient.subject.subscribe((msgObj) => {
+      expect(msgObj.msg).to.equal("subJecttest");
     });
       
-    ddpClient.onMessageReceived("{ \"msg\": \"message\"}");
+    ddpClient.messageReceivedCallback("{ \"msg\": \"subJecttest\"}");
   });
 });
