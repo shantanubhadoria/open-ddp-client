@@ -20,7 +20,7 @@ ws.onConnect(() => {
 });
 
 // message: string
-ws.onMessage((message) => {
+ws.onMessage((message: string) => {
   ddpClient.messageReceivedCallback(message);
 });
 
@@ -34,7 +34,7 @@ ws.onClose(() => {
 });
 
 // Attach a handler for handle sending messages from the ddp client
-ddpClient.sendMessageCallback = (message) => { 
+ddpClient.sendMessageCallback = (message: string) => { 
   ws.send(message);
 };
 // Since ws object also takes a single message string as param this could be simply replaced with this

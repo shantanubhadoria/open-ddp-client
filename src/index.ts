@@ -1,3 +1,4 @@
-import { DDPClient } from "./ddp-client";
+import DDPClient from "./ddp-client";
+import Methods from "./methods";
 
-export { DDPClient };
+export { DDPClient, Methods };

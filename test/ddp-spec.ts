@@ -1,4 +1,4 @@
-import { DDPClient } from "../src/ddp-client";
+import DDPClient from "../src/ddp-client";
 import {} from "mocha";
 import { expect } from "chai";
 import * as EJSON from "ejson";
@@ -11,8 +11,11 @@ describe("ddpclient", () => {
 
   it("Should accept Keyvalue store with get and set", () => {
     class KeyValueStore {
-      get() {}
-      set() {}
+      get(key: string) {}
+      set(key: string, value: any) {}
+      has(): boolean {
+        return true;
+      }
     }
     let keyValueStore = new KeyValueStore();
     
@@ -26,8 +29,8 @@ describe("ddpclient", () => {
 describe("Reconnect without previous session", () => {
   let ddpClient = DDPClient.Instance();
   it("Should send a connect msg on establishing websocket connection", (done) => {
-    ddpClient.keyValueStore = new Map();
-    ddpClient.sendMessageCallback = (message: any) => {
+    ddpClient.keyValueStore = new Map<string, any>();
+    ddpClient.sendMessageCallback = (message: string) => {
       let msgObj = EJSON.parse(message);
       if(msgObj.msg === "connect") {
         expect(msgObj.version).to.be.a("string");
@@ -42,9 +45,9 @@ describe("Reconnect without previous session", () => {
 describe("Reconnect with previous session", () => {
   let ddpClient = DDPClient.Instance();
   it("Should resend a session id if present in key store", (done) => {
-    ddpClient.keyValueStore = new Map();
+    ddpClient.keyValueStore = new Map<string, any>();
     ddpClient.keyValueStore.set("DDPSessionId", "sessionIDForTest");
-    ddpClient.sendMessageCallback = (message: any) => {
+    ddpClient.sendMessageCallback = (message: string) => {
       let msgObj = EJSON.parse(message);
       if(msgObj.msg === "connect") {
         expect(msgObj.version).to.be.a("string");
@@ -58,9 +61,9 @@ describe("Reconnect with previous session", () => {
 });
 
 describe("Subject", () => {
+  let ddpClient = DDPClient.Instance();
   it("should trigger next on message received", () => {
-    let ddpClient = DDPClient.Instance();
-    ddpClient.keyValueStore = new Map();
+    ddpClient.keyValueStore = new Map<string, any>();
     ddpClient.subject.subscribe((msgObj) => {
       expect(msgObj.msg).to.equal("subJecttest");
     });

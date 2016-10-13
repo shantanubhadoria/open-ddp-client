@@ -1,9 +1,8 @@
-import { IDDPMessage, IKeyValueStore } from "./models";
+import { IDDPClient, IDDPErrorObject, IDDPMessage, IDDPObserver, IKeyValueStore } from "./models";
 import * as EJSON from "ejson";
-
 import * as Rx from "rxjs/Rx";
 
-export class DDPClient {
+export default class DDPClient implements IDDPClient {
   public static Instance(): DDPClient {
     return DDPClient.instance;
   }
@@ -11,12 +10,10 @@ export class DDPClient {
   private static instance: DDPClient = new DDPClient(); // Singleton
 
   public subject: Rx.Subject<IDDPMessage>;
+  public observer: IDDPObserver<IDDPMessage>;
   public keyValueStore: IKeyValueStore;
 
   public sendMessageCallback: Function;
-  public messageReceivedCallback: Function;
-  public errorCallback: Function;
-  public closeCallback: Function;
 
   private ddpVersion = "1";
   private supportedDDPVersions = ["1", "pre2", "pre1"];
@@ -27,14 +24,9 @@ export class DDPClient {
   private reauthAttempted: boolean = false;
 
   constructor() {
-    let observable = Rx.Observable.create((obs: Rx.Observer<IDDPMessage>) => {
-      this.messageReceivedCallback = (message: string) => {
-        obs.next(EJSON.parse(message));
-      };
-      this.errorCallback = obs.error.bind(obs);
-      this.closeCallback = obs.complete.bind(obs);
-    });
-    let observer = {
+    this.subject = new Rx.Subject();
+
+    this.observer = {
       next: (message: IDDPMessage) => {
           if (
             this.reauthAttempted
@@ -47,7 +39,6 @@ export class DDPClient {
           }
       },
     };
-    this.subject = Rx.Subject.create(observer, observable);
   }
 
   public onConnect() {
@@ -66,23 +57,36 @@ export class DDPClient {
     });
   }
 
+  public messageReceivedCallback(message: string): void {
+    this.subject.next(EJSON.parse(message));
+  }
+
+  public errorCallback(error: IDDPErrorObject) {
+    this.subject.error(error);
+  }
+
+  public closeCallback() {
+    this.subject.complete();
+  }
+
   private sendConnectMessage() {
     let connectRequest: IDDPMessage = {
       msg: "connect",
       support: this.supportedDDPVersions,
       version: this.ddpVersion,
     };
-    let sessionId = this.keyValueStore.get("DDPSessionId");
-    if (sessionId) {
-      connectRequest.session = sessionId;
+    if (this.keyValueStore.has("DDPSessionId")) {
+      connectRequest.session = this.keyValueStore.get("DDPSessionId");
     }
-    this.subject.next(connectRequest);
+    
+    this.observer.next(connectRequest);
   }
 
   private resumeLoginWithToken(callback: Function) {
     let loginToken = this.keyValueStore.get("LoginToken");
     if (loginToken) {
       // Accounts.loginWithToken(loginToken, callback);
+      callback();
     } else {
       callback();
     }

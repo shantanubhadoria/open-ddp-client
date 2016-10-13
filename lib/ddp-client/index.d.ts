@@ -1,14 +1,12 @@
-import { IDDPMessage, IKeyValueStore } from "./models";
+import { IDDPClient, IDDPErrorObject, IDDPMessage, IDDPObserver, IKeyValueStore } from "./models";
 import * as Rx from "rxjs/Rx";
-export declare class DDPClient {
+export default class DDPClient implements IDDPClient {
     static Instance(): DDPClient;
     private static instance;
     subject: Rx.Subject<IDDPMessage>;
+    observer: IDDPObserver<IDDPMessage>;
     keyValueStore: IKeyValueStore;
     sendMessageCallback: Function;
-    messageReceivedCallback: Function;
-    errorCallback: Function;
-    closeCallback: Function;
     private ddpVersion;
     private supportedDDPVersions;
     private callStack;
@@ -17,6 +15,9 @@ export declare class DDPClient {
     private reauthAttempted;
     constructor();
     onConnect(): void;
+    messageReceivedCallback(message: string): void;
+    errorCallback(error: IDDPErrorObject): void;
+    closeCallback(): void;
     private sendConnectMessage();
     private resumeLoginWithToken(callback);
     private dispatchBufferedCallStack();
