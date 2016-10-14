@@ -1,9 +1,9 @@
 import { DDPClient } from "../ddp-client";
 import { IDDPClient, IDDPErrorObject } from "../ddp-client/models";
 import { Methods } from "../methods";
+import { SHA256 } from "../sha256";
 import { IDDPLoginResultObject } from "./models";
 import * as EJSON from "ejson";
-var createHash = require('sha.js')
 
 export class Accounts {
   public static instance: Accounts = new Accounts(); // Singleton
