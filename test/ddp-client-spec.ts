@@ -97,4 +97,29 @@ describe("DDPClient", () => {
     });
   });
 
+  describe("after onConnected(), and {msg:\"connected\"} received", () => {
+    describe("if a message is sent before initiation proceedures ", () => {
+      it("make sure its called after initiation", (done) => {
+        let ddpClient = new DDPClient();
+        ddpClient.keyValueStore = new Map<string, any>();
+        ddpClient.sendMessageCallback = (message: string) => {
+          // Intercepting message sent to server
+          let msgObj = EJSON.parse(message);
+          if (msgObj.msg === "testMessage") {
+            done();
+          }
+        };
+
+        ddpClient.send({
+          msg: "testMessage"
+        });
+        ddpClient.connected();
+        let connectedMessage = {
+          msg: "connected",
+          session: "testSessionId"
+        };
+        ddpClient.subscription.next(EJSON.stringify(connectedMessage));
+      });
+    });
+  });
 });

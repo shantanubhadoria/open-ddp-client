@@ -33,9 +33,13 @@ export class Accounts {
     return this.methodsObject.call("login", params, (result: IDDPLoginResultObject, error: IDDPErrorObject) => {
       this.ddpClient.keyValueStore.set("loginToken", result.token);
       this.ddpClient.keyValueStore.set("loginTokenExpires", EJSON.stringify(result.tokenExpires));
-      resultCallback(result, error);
+      if (resultCallback) {
+        resultCallback(result, error);
+      }
     }, () => {
-      updatedCallback();
+      if (updatedCallback) {
+        updatedCallback();
+      }
     });
   }
 
@@ -81,7 +85,7 @@ export class Accounts {
   }
 
   private hashPassword(password: string) {
-    let sha256Object = ""; // new SHA256(password);
+    let sha256Object = new SHA256(password);
     return {
       algorithm: "sha-256",
       digest: sha256Object.toString(),

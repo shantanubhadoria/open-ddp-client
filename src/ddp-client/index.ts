@@ -104,6 +104,9 @@ export class DDPClient implements IDDPClient {
   }
 
   public dispatchCallStack(): void {
+    this.callStack.forEach(msgObj => {
+      this.send(msgObj);
+    });
   }
 
   public send(msgObj: IDDPMessage): MessageSendStatus {
