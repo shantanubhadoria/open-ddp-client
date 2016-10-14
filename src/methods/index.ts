@@ -36,7 +36,6 @@ export default class Methods {
     resultCallback?: Function,
     updatedCallback?: Function
   ) {
-    console.log(method);
     let methodId = new ObjectId();
 
     let methodCallMessage: IDDPMessageMethodCall = {

@@ -79,7 +79,6 @@ export default class DDPClient implements IDDPClient {
     if (this.keyValueStore.has("DDPSessionId")) {
       connectRequest.session = this.keyValueStore.get("DDPSessionId");
     }
-    
     this.observer.next(connectRequest);
   }
 

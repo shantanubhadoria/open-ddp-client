@@ -1,7 +1,6 @@
-import DDPClient from "../src/ddp-client";
+import { DDPClient, EJSON } from "../src";
 import {} from "mocha";
 import { expect } from "chai";
-import * as EJSON from "ejson";
 
 describe("ddpclient", () => {
   let ddpClient = DDPClient.Instance();

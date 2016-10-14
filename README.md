@@ -1,4 +1,6 @@
 # open-ddp-client
+
+**UNDER CONSTRUCTION**
 Platform agnostic ddp client to run in browser, nativescript etc.
 
 ```

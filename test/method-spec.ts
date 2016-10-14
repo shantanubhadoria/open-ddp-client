@@ -1,18 +1,28 @@
-import Methods from "../src/methods";
-import DDPClient from "../src/ddp-client";
+import { DDPClient, EJSON, Methods } from "../src";
 import {} from "mocha";
 import { expect } from "chai";
-import * as EJSON from "ejson";
 
 let connectedMessage = '{"msg":"connected", "session": "testSessionID"}';
 
 describe("ddp methods call without params", () => {
-  let ddpClient = DDPClient.Instance();
-  let methods = Methods.Instance();
+  it("send a message on ddp", (done) => {
+    let ddpClient = DDPClient.Instance();
+    ddpClient.sendMessageCallback = (message: string) => {
+      console.log("sending", message);
+    };
+    ddpClient.subject.subscribe((message) => {
+      console.log("received", message);
+    });
+    ddpClient.observer.next('{"msg":"connect", "session": "testSessionIDr"}');
+    ddpClient.subject.next('{"msg":"connected", "session": "testSessionIDr"}');
+    ddpClient.onConnect();
+
+  /*
   ddpClient.keyValueStore = new Map<string, any>();
   it("send a message on ddp", (done) => {
     ddpClient.sendMessageCallback = (message: string) => {
       let msgObj = EJSON.parse(message);
+      console.log(message);
       if(msgObj.msg === "method") {
         expect(msgObj.method).to.equal("testMethod");
         expect(msgObj.id).to.be.a("string");
@@ -20,10 +30,16 @@ describe("ddp methods call without params", () => {
         done();
       }
     };
+    ddpClient.subject.next('{"msg":"connected", "session": "testSessionIDr"}');
+    //ddpClient.observer.next('{"msg":"connected", "session": "testSessionIDr"}');
+    ddpClient.messageReceivedCallback('{"msg":"connected", "session": "testSessionIDr"}');
     ddpClient.onConnect();
+    ddpClient.observer.next('{"msg":"connected", "session": "testSessionIDr"}');
+    ddpClient.observer.next('{"msg":"connected", "session": "testSessionIDr"}');
     ddpClient.messageReceivedCallback('{"msg":"connected", "session": "testSessionIDr"}');
     
     methods.call("testMethod1");
+    */
   });
 });
 
