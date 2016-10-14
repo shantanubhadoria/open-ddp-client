@@ -1,5 +1,5 @@
 /// <reference path="../typings/index.d.ts" />
-import { DDPClient } from "../src";
+import { DDPClient, Accounts } from "../src";
 import {} from "mocha";
 import { expect } from "chai";
 import * as EJSON from "ejson";
@@ -82,9 +82,14 @@ describe("DDPClient", () => {
         ddpClient.keyValueStore = new Map<string, any>();
         ddpClient.keyValueStore.set("DDPSessionId", "previousSessionId");
         ddpClient.keyValueStore.set("LoginToken", "previousLoginToken");
+        // Make sure all singletons uses this DDP object for proper interception
+        Accounts.instance.ddpClient = ddpClient;
+        Accounts.instance.methodsObject.ddpClient = ddpClient;
+
         ddpClient.sendMessageCallback = (message: string) => {
           // Intercepting message sent to server
           let msgObj = EJSON.parse(message);
+          console.log(message);
           if (msgObj.msg === "connect") {
             expect(msgObj.support).to.be.a("array");
             expect(msgObj.version).to.be.a("string");
@@ -93,6 +98,11 @@ describe("DDPClient", () => {
           }
         };
         ddpClient.connected();
+        let connectedMessage = {
+          msg: "connected",
+          session: "testSessionId"
+        };
+        ddpClient.subscription.next(EJSON.stringify(connectedMessage));
       });
     });
   });

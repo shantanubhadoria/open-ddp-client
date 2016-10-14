@@ -15,7 +15,7 @@ export class Methods {
   public resultMessageSubscription: Observable<IDDPMessageMethodResult>;
   public updatedMessageSubscription: Observable<IDDPMessageMethodUpdated>;
 
-  private ddpClient: IDDPClient;
+  public ddpClient: IDDPClient;
   private resultCallbacks: Map<string, IMethodCallStore> = new Map<string, IMethodCallStore>();
   private updatedCallbacks: Map<string, IMethodCallStore> = new Map<string, IMethodCallStore>();
 
