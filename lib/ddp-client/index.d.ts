@@ -1,24 +1,24 @@
-import { IDDPClient, IDDPErrorObject, IDDPMessage, IDDPObserver, IKeyValueStore } from "./models";
-import * as Rx from "rxjs/Rx";
-export default class DDPClient implements IDDPClient {
-    static Instance(): DDPClient;
-    private static instance;
-    subject: Rx.Subject<IDDPMessage>;
-    observer: IDDPObserver<IDDPMessage>;
+import { IDDPClient, IDDPMessage, IKeyValueStore, MessageSendStatus } from "./models";
+import "rxjs/add/operator/filter";
+import "rxjs/add/operator/map";
+import { Observable } from "rxjs/Observable";
+import { Subject } from "rxjs/Subject";
+export declare class DDPClient implements IDDPClient {
+    static instance: DDPClient;
     keyValueStore: IKeyValueStore;
     sendMessageCallback: Function;
+    subscription: Subject<string>;
+    ddpSubscription: Observable<IDDPMessage>;
+    connectedSubscription: Observable<IDDPMessage>;
+    socketConnectedStatus: boolean;
+    DDPConnectedStatus: boolean;
+    reauthAttemptedStatus: boolean;
     private ddpVersion;
     private supportedDDPVersions;
     private callStack;
-    private connected;
-    private connectedDDP;
-    private reauthAttempted;
     constructor();
-    onConnect(): void;
-    messageReceivedCallback(message: string): void;
-    errorCallback(error: IDDPErrorObject): void;
-    closeCallback(): void;
-    private sendConnectMessage();
-    private resumeLoginWithToken(callback);
-    private dispatchBufferedCallStack();
+    connected(): void;
+    connectedDDP(): void;
+    dispatchCallStack(): void;
+    send(msgObj: IDDPMessage): MessageSendStatus;
 }

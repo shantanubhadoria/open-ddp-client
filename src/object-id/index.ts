@@ -1,6 +1,6 @@
 import { Random } from "../random";
 
-export default class ObjectId {
+export class ObjectId {
   public static looksLikeObjectId(str: string): boolean {
     return !!(str.length === 24 && str.match(/^[0-9a-f]*$/));
   }

@@ -1,5 +1,5 @@
-import DDPClient from "./ddp-client";
-import Methods from "./methods";
-import * as EJSON from "ejson";
+import { Accounts } from "./accounts";
+import { DDPClient } from "./ddp-client";
+import { Methods } from "./methods";
 
-export { DDPClient, Methods, EJSON };
+export { DDPClient, Methods, Accounts };

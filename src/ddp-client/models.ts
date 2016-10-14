@@ -1,4 +1,6 @@
-import * as Rx from "rxjs/Rx";
+import { Observable } from "rxjs/Observable";
+import { Subject } from "rxjs/Subject";
+
 export interface IKeyValueStore {
   get(key: string): any;
   set(key: string, value: any): void;
@@ -8,6 +10,12 @@ export interface IKeyValueStore {
 enum DDPMessageType {
   "connect",
   "message"
+}
+
+export enum MessageSendStatus {
+  "sent",
+  "deferred",
+  "failed"
 }
 
 export interface IDDPMessage {
@@ -24,6 +32,13 @@ export interface IDDPMessage {
   error?: IDDPErrorObject;
 }
 
+export interface IDDPMessageConnect {
+  msg: string;
+  session?: string;
+  support: string[];
+  version: string;
+}
+
 export interface IDDPErrorObject {
   error: string;
   reason?: string;
@@ -31,16 +46,9 @@ export interface IDDPErrorObject {
 }
 
 export interface IDDPClient {
-    subject: Rx.Subject<IDDPMessage>;
-    observer: IDDPObserver<IDDPMessage>;
+    subscription: Subject<string>;
+    ddpSubscription: Observable<IDDPMessage>;
     keyValueStore: IKeyValueStore;
+    send: Function;
     sendMessageCallback: Function;
-    messageReceivedCallback: Function;
-    errorCallback: Function;
-    closeCallback: Function;
-    onConnect(): void;
-}
-
-export interface IDDPObserver<T> {
-  next(message: T): void;
 }

@@ -1,4 +1,4 @@
-export default class ObjectId {
+export declare class ObjectId {
     static looksLikeObjectId(str: string): boolean;
     static selectorIsId(selector: any): boolean;
     private str;

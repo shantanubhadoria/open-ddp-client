@@ -1,7 +1,7 @@
 {
   "name": "open-ddp-client",
   "version": "1.0.0",
-  "description": "Open pluggable DDP client for multi platform use",
+  "description": "open-ddp-client",
   "license": "MIT",
   "homepage": "https://github.com/shantanubhadoria/open-ddp-client#readme",
   "repository": {

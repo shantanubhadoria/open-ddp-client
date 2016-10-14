@@ -1,43 +1,56 @@
-import DDPClient from "../ddp-client";
+import { DDPClient } from "../ddp-client";
 import { IDDPClient, IDDPMessage } from "../ddp-client/models";
-import ObjectId from "../object-id";
-import { IDDPMessageMethodCall, IDDPMessageMethodResult, IDDPMessageMethodUpdated, IMethodCallStore } from "./models";
+import { ObjectId } from "../object-id";
+import {
+  IDDPMessageMethodCall,
+  IDDPMessageMethodResult,
+  IDDPMessageMethodUpdated,
+  IMethodCallStore,
+} from "./models";
+import { Observable } from "rxjs/Observable";
 
-export default class Methods {
-  public static Instance(): Methods {
-    return Methods.instance;
-  }
+export class Methods {
+  public static instance: Methods = new Methods(); // Singleton
 
-  private static instance: Methods = new Methods(); // Singleton
+  public resultMessageSubscription: Observable<IDDPMessageMethodResult>;
+  public updatedMessageSubscription: Observable<IDDPMessageMethodUpdated>;
 
   private ddpClient: IDDPClient;
   private resultCallbacks: Map<string, IMethodCallStore> = new Map<string, IMethodCallStore>();
   private updatedCallbacks: Map<string, IMethodCallStore> = new Map<string, IMethodCallStore>();
 
-  constructor(ddpClient: IDDPClient = DDPClient.Instance()) {
+  constructor(ddpClient?: IDDPClient) {
+    // This bit of code allows us to mock DDPClient with a alternate class or a localized instance of DDPClient
     if (ddpClient) {
       this.ddpClient = ddpClient;
     } else {
-      this.ddpClient = DDPClient.Instance();
+      this.ddpClient = DDPClient.instance;
     }
 
-    // Dispatch to result handler
-    this.ddpClient.subject.filter((value: IDDPMessage) => value.msg === "result")
-    .subscribe(this.handleResult.bind(this));
+    this.resultMessageSubscription = this.ddpClient.ddpSubscription.filter(
+      (msgObj: IDDPMessage) => {
+        return msgObj.msg === "result";
+      }
+    );
+    this.updatedMessageSubscription = this.ddpClient.ddpSubscription.filter(
+      (msgObj: IDDPMessage) => {
+        return msgObj.msg === "updated";
+      }
+    );
 
-    // Dispatch to updated handler
-    this.ddpClient.subject.filter((value: IDDPMessage) => value.msg === "updated")
-    .subscribe(this.handleUpdated.bind(this));
+    // Dispatch subscriptions to result handlers
+    this.resultMessageSubscription.subscribe(this.handleResult.bind(this));
+    this.updatedMessageSubscription.subscribe(this.handleUpdated.bind(this));
   }
 
   public call(
     method: string,
-    params?: Array<any>,
+    params?: any[],
     resultCallback?: Function,
     updatedCallback?: Function
-  ) {
-    let methodId = new ObjectId();
-
+  ): string {
+    let methodId: ObjectId = new ObjectId();
+    let methodIdStr: string = methodId.toHexString();
     let methodCallMessage: IDDPMessageMethodCall = {
       id: methodId.toHexString(),
       method,
@@ -53,6 +66,7 @@ export default class Methods {
         resultCallback,
       });
     }
+
     if (updatedCallback) {
       this.updatedCallbacks.set(methodId.toHexString(), {
         id: methodId.toHexString(),
@@ -61,25 +75,21 @@ export default class Methods {
         updatedCallback,
       });
     }
-    this.ddpClient.observer.next(methodCallMessage);
 
-    return methodId.toHexString();
+    this.ddpClient.send(methodCallMessage);
+    return methodIdStr;
   }
 
-  private handleResult(message: IDDPMessageMethodResult) {
-    let methodCall: IMethodCallStore = this.resultCallbacks.get(message.id);
-    methodCall.resultCallback(message.result, message.error);
-    this.resultCallbacks.delete(message.id);
+  public handleResult(msgObj: IDDPMessageMethodResult) {
+    let methodStoreItem = this.resultCallbacks.get(msgObj.id);
+    methodStoreItem.resultCallback(msgObj.result, msgObj.error);
+    this.resultCallbacks.delete(msgObj.id);
   }
 
-  private handleUpdated(message: IDDPMessageMethodUpdated) {
-    message.methods.forEach(methodId => {
-      let methodCall: IMethodCallStore = this.updatedCallbacks.get(methodId);
-      methodCall.updatedCallback({
-        id: methodCall.id,
-        method: methodCall.method,
-        params: methodCall.params,
-      });
+  public handleUpdated(msgObj: IDDPMessageMethodUpdated) {
+    msgObj.methods.forEach(methodId => {
+      let methodStoreItem = this.updatedCallbacks.get(methodId);
+      methodStoreItem.updatedCallback();
       this.updatedCallbacks.delete(methodId);
     });
   }
