@@ -1,5 +1,5 @@
 /// <reference path="../typings/index.d.ts" />
-import { Methods, Accounts } from "../src";
+import { Accounts, Methods } from "../src";
 
 import { prepareUniqueDDPObject } from "./utils";
 
@@ -13,18 +13,18 @@ describe("login()", () => {
     let methods = new Methods(ddpClient);
     let accounts = new Accounts(ddpClient, methods);
     ddpClient.sendMessageCallback = (message: string) => {
-        // Intercepting message sent to server
-        let msgObj = EJSON.parse(message);
-      };
+      // Intercepting message sent to server
+      return true;
+    };
     let methodId = accounts.login([]);
     let expireTime = new Date();
     ddpClient.subscription.next(EJSON.stringify({
-      msg: "result",
       id: methodId,
+      msg: "result",
       result: {
         token: "testLoginToken",
         tokenExpires: expireTime,
-      }
+      },
     }));
 
     expect(ddpClient.keyValueStore.get("loginToken")).to.equal("testLoginToken");
