@@ -1,29 +1,11 @@
 /// <reference path="../typings/index.d.ts" />
-import { DDPClient, Accounts } from "../src";
+import { Accounts, DDPClient } from "../src";
 
 import { expect } from "chai";
 import * as EJSON from "ejson";
 import "mocha";
 
 describe("DDPClient", () => {
-
-  describe("while setting params", () => {
-    it("should accept Keyvalue store with get and set", () => {
-        let ddpClient = new DDPClient();  
-        class KeyValueStore {
-        get(key: string) {}
-        set(key: string, value: any) {}
-        has(): boolean {
-            return true;
-        }
-        }
-        let keyValueStore = new KeyValueStore();
-        
-        expect(() => {
-        ddpClient.keyValueStore = keyValueStore;
-        }).to.not.throw('Unable to assign a key value store');
-    });
-  });
   
   describe("after onConnected()", () => {
 
@@ -34,7 +16,7 @@ describe("DDPClient", () => {
         ddpClient.connected();
         let connectedMessage = {
           msg: "connected",
-          session: "testSessionId"
+          session: "testSessionId",
         };
         ddpClient.subscription.next(EJSON.stringify(connectedMessage));
         expect(ddpClient.keyValueStore.get("DDPSessionId")).to
@@ -99,7 +81,7 @@ describe("DDPClient", () => {
         ddpClient.connected();
         let connectedMessage = {
           msg: "connected",
-          session: "testSessionId"
+          session: "testSessionId",
         };
         ddpClient.subscription.next(EJSON.stringify(connectedMessage));
       });
@@ -120,12 +102,12 @@ describe("DDPClient", () => {
         };
 
         ddpClient.send({
-          msg: "testMessage"
+          msg: "testMessage",
         });
         ddpClient.connected();
         let connectedMessage = {
           msg: "connected",
-          session: "testSessionId"
+          session: "testSessionId",
         };
         ddpClient.subscription.next(EJSON.stringify(connectedMessage));
       });
