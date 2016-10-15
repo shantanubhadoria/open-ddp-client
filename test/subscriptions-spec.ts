@@ -33,8 +33,8 @@ describe("DDPClient Subscriptions", () => {
         "a",
         {
           a: "a",
-          b: "b"
-        }
+          b: "b",
+        },
       ];
       ddpClient.sendMessageCallback = (message: string) => {
         // Intercepting message sent to server
@@ -56,12 +56,12 @@ describe("DDPClient Subscriptions", () => {
       let readyCallback = () => {
         done();
       };
-      let subscriptionId = subscriptions.subscribe("testSub", undefined, readyCallback);;
+      let subscriptionId = subscriptions.subscribe("testSub", undefined, readyCallback);
       let readyMessage = {
-        subs: [subscriptionId],
         msg: "ready",
+        subs: [subscriptionId],
       };
-      
+  
       ddpClient.subscription.next(EJSON.stringify(readyMessage));
     });
   });
@@ -79,7 +79,7 @@ describe("DDPClient Subscriptions", () => {
         id: subscriptionId,
         msg: "nosub",
       };
-      
+
       ddpClient.subscription.next(EJSON.stringify(unsubMessage));
     });
   });
