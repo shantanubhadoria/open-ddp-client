@@ -1,8 +1,0 @@
-{
-  "resolution": "main",
-  "tree": {
-    "src": "https://raw.githubusercontent.com/shantanubhadoria/DefinitelyTyped/master/ejson/ejson.d.ts",
-    "raw": "github:shantanubhadoria/DefinitelyTyped/ejson/ejson.d.ts",
-    "typings": "https://raw.githubusercontent.com/shantanubhadoria/DefinitelyTyped/master/ejson/ejson.d.ts"
-  }
-}
