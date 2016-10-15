@@ -1,4 +1,5 @@
 import { IDDPErrorObject } from "../ddp-client/models";
+
 export interface IDDPMessageMethodCall {
   msg: string;
   id: string;

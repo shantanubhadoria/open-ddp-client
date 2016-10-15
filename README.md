@@ -21,7 +21,7 @@ npm install open-ddp-client
 
 Here is a quick example for using this library using nodejs websocket npm module to talk to the DDP server.
 
-```ts
+```Typescript
 import { DDPClient, Accounts } from "open-ddp-client";
 import { client as WebSocket } from "websocket";
 
