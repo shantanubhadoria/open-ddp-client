@@ -25,17 +25,17 @@ describe("Collection", () => {
         done();
       });
       subscription.unsubscribe();
-    })
+    });
 
     it("should trigger with new value on added message after subscription", (done) => {
       let addedMessage: IDDPMessageDocumentAdded = {
-        msg: "added",
         collection: collectionName,
-        id: "testId1",
         fields: {
           _id: "testId1",
           testField: "testField1",
         },
+        id: "testId1",
+        msg: "added",
       };
       let subscription = testCollection.collection.subscribe((collection: Array<IDDPDocument>) => {
         // Skip initial empty value
@@ -61,9 +61,7 @@ describe("Collection", () => {
 
     it("should trigger on next added message with aggregated values", (done) => {
       let addedMessage: IDDPMessageDocumentAdded = {
-        msg: "added",
         collection: collectionName,
-        id: "testId2",
         fields: {
           _id: "testId2",
           testField: "testField2",
@@ -72,6 +70,8 @@ describe("Collection", () => {
             c: "d",
           },
         },
+        id: "testId2",
+        msg: "added",
       };
       let subscription = testCollection.collection.subscribe((collection: IDDPDocument[]) => {
         // Skip initial empty value
@@ -96,22 +96,22 @@ describe("Collection", () => {
 
     it("should trigger next with updated collection on changed message", (done) => {
       let updatedMessage: IDDPMessageDocumentChanged = {
-        msg: "changed",
         collection: collectionName,
-        id: "testId2",
         fields: {
+          newArrayField: ["a", "b", "c"],
+          newField: "newFieldValue",
+          newObjectField: {
+            a: "b",
+            c: "d",
+          },
           testField: "testField2Updated",
           testObject: {
             c: "e",
             f: "g",
           },
-          newField: "newFieldValue",
-          newArrayField: ["a", "b", "c"],
-          newObjectField: {
-            a: "b",
-            c: "d",
-          },
         },
+        id: "testId2",
+        msg: "changed",
       };
       let subscription = testCollection.collection.subscribe((collection: IDDPDocument[]) => {
         // Skip initial empty value
@@ -122,16 +122,16 @@ describe("Collection", () => {
               {_id:"testId1", testField:"testField1"},
               {
                 _id:"testId2",
+                newArrayField: ["a", "b", "c"],
+                newField: "newFieldValue",
+                newObjectField: {
+                  a: "b",
+                  c: "d",
+                },
                 testField:"testField2Updated",
                 testObject: {
                   c: "e",
                   f: "g",
-                },
-                newField: "newFieldValue",
-                newArrayField: ["a", "b", "c"],
-                newObjectField: {
-                  a: "b",
-                  c: "d",
                 },
               },
             ]);
@@ -145,9 +145,9 @@ describe("Collection", () => {
 
     it("should delete on removed message", (done) => {
       let removedMessage: IDDPMessageDocumentRemoved = {
-        msg: "removed",
         collection: collectionName,
         id: "testId2",
+        msg: "removed",
       };
       let subscription = testCollection.collection.subscribe((collection: IDDPDocument[]) => {
         if (collection.length < 2) {
