@@ -31,13 +31,14 @@
     "watch:test": "npm run test -- --watch"
   },
   "dependencies": {
+    "@types/chai": "^3.4.30",
     "ejson": "^2.1.2",
     "rxjs": "^5.0.0-rc.1"
   },
   "devDependencies": {
-    "@types/chai": "3.4.30",
-    "@types/mocha": "2.2.29",
-    "@types/node": "6.0.31",
+    "@types/chai": "3.4.34",
+    "@types/mocha": "2.2.32",
+    "@types/node": "6.0.45",
     "chai": "^3.5.0",
     "ejson": "^2.1.2",
     "mocha": "^3.0.1",
