@@ -44,8 +44,8 @@ describe("Collection", () => {
             [
               {
                 _id: "testId1",
-                testField: "testField1"
-              }
+                testField: "testField1",
+              },
             ]
           );
           done();
@@ -55,21 +55,24 @@ describe("Collection", () => {
       subscription.unsubscribe();
     });
 
-    it("should show last value on subscription(Replay last) initialization even if there are no new messages", (done) => {
-      let subscription = testCollection.collection.subscribe((collection: IDDPDocument[]) => {
-        // Skip initial empty value
-        if (collection.length > 0) {
-          expect(collection).to.eql(
-            [
-              {
-                _id: "testId1",
-                testField: "testField1"
-              }
-            ]
-          );
-          done();
+    it(
+      "should show last value on subscription(Replay last) initialization even if there are no new messages", 
+      (done) => {
+        let subscription = testCollection.collection.subscribe((collection: IDDPDocument[]) => {
+          // Skip initial empty value
+          if (collection.length > 0) {
+            expect(collection).to.eql(
+              [
+                {
+                  _id: "testId1",
+                  testField: "testField1",
+                },
+              ]
+            );
+            done();
+          }
         }
-      });
+      );
       subscription.unsubscribe();
     });
 
@@ -93,7 +96,7 @@ describe("Collection", () => {
           expect(collection).to.eql([
             {
               _id: "testId1",
-              testField: "testField1"
+              testField: "testField1",
             },
             {
               _id: "testId2",
@@ -102,7 +105,7 @@ describe("Collection", () => {
                 a: "b",
                 c: "d",
               },
-            }
+            },
           ]);
           done();
         }
@@ -136,16 +139,19 @@ describe("Collection", () => {
           let document = collection[key];
           if (document["testField"] === "testField2Updated") {
             expect(collection).to.eql([
-              {_id:"testId1", testField:"testField1"},
               {
-                _id:"testId2",
+                _id: "testId1",
+                testField: "testField1",
+              },
+              {
+                _id: "testId2",
                 newArrayField: ["a", "b", "c"],
                 newField: "newFieldValue",
                 newObjectField: {
                   a: "b",
                   c: "d",
                 },
-                testField:"testField2Updated",
+                testField: "testField2Updated",
                 testObject: {
                   c: "e",
                   f: "g",
