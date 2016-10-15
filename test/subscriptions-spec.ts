@@ -61,7 +61,6 @@ describe("DDPClient Subscriptions", () => {
         msg: "ready",
         subs: [subscriptionId],
       };
-  
       ddpClient.subscription.next(EJSON.stringify(readyMessage));
     });
   });
@@ -94,13 +93,12 @@ describe("DDPClient Subscriptions", () => {
       };
       let subscriptionId = subscriptions.subscribe("testSub", undefined, undefined, undefined, stopCallback);
       let unsubMessage = {
-        id: subscriptionId,
-        msg: "nosub",
         error: {
           reason: "reason 1",
         },
+        id: subscriptionId,
+        msg: "nosub",
       };
-      
       ddpClient.subscription.next(EJSON.stringify(unsubMessage));
     });
 
@@ -113,13 +111,12 @@ describe("DDPClient Subscriptions", () => {
       };
       let subscriptionId = subscriptions.subscribe("testSub", undefined, undefined, errorCallback);
       let unsubMessage = {
-        id: subscriptionId,
-        msg: "nosub",
         error: {
           reason: "reason 1",
         },
+        id: subscriptionId,
+        msg: "nosub",
       };
-      
       ddpClient.subscription.next(EJSON.stringify(unsubMessage));
     });
   });
