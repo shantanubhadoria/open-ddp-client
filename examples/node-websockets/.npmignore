@@ -1,0 +1,6 @@
+lib/
+typings/
+node_modules/
+package.json
+tsconfig.json
+typings.json
