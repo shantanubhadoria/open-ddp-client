@@ -1,4 +1,4 @@
-import { DDPClient, Accounts } from "../../../src";
+import { Accounts, DDPClient } from "../../../src";
 import { client as WebSocket } from "websocket";
 
 let ddpClient = DDPClient.instance;
@@ -8,29 +8,25 @@ ddpClient.keyValueStore = new Map<string, any>();
 
 let client = new WebSocket();
 
-client.on('connectFailed', function(error) {
+client.on("connectFailed", function(error) {
     console.log('Connect Error: ' + error.toString());
 });
 
-client.on('connect', (connection) => {
-  console.log('WebSocket Client Connected');
+client.on("connect", (connection) => {
 
   ddpClient.sendMessageCallback = (message: string) => {
-    console.log("SENDING", message);
     connection.sendUTF(message);
   };
 
-
-  connection.on('message', (message) => {
-    if (message.type === 'utf8') {
-      console.log("RECEIVED", message.utf8Data);
+  connection.on("message", (message) => {
+    if (message.type === "utf8") {
       ddpClient.subscription.next(message.utf8Data);
     }
   });
 
-  ddpClient.connected();  
-  
-  accounts.loginWithPassword("shantanubhadoria","hahaNiceTry");
+  ddpClient.connected();
+
+  accounts.loginWithPassword("shantanubhadoria", "hahaNiceTry");
 
 });
 

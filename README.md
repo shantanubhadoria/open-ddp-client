@@ -32,11 +32,11 @@ ddpClient.keyValueStore = new Map<string, any>();
 
 let client = new WebSocket();
 
-client.on('connectFailed', function(error) {
+client.on("connectFailed", function(error) {
     console.log('Connect Error: ' + error.toString());
 });
 
-client.on('connect', (connection) => {
+client.on("connect", (connection) => {
   console.log('WebSocket Client Connected');
 
   ddpClient.sendMessageCallback = (message: string) => {
@@ -45,8 +45,8 @@ client.on('connect', (connection) => {
   };
 
 
-  connection.on('message', (message) => {
-    if (message.type === 'utf8') {
+  connection.on("message", (message) => {
+    if (message.type === "utf8") {
       console.log("RECEIVED", message.utf8Data);
       ddpClient.subscription.next(message.utf8Data);
     }
