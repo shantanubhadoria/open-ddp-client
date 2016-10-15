@@ -11,7 +11,7 @@ export function prepareUniqueDDPObject() {
   ddpClient.connected();
   let connectedMessage = {
     msg: "connected",
-    session: "testSessionId"
+    session: "testSessionId",
   };
   ddpClient.subscription.next(EJSON.stringify(connectedMessage));
 
