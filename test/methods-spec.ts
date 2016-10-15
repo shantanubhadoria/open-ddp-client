@@ -22,7 +22,7 @@ describe("DDPClient Methods", () => {
           done();
         }
       };
-      let methodId = methods.call("testMethodName");
+      methods.call("testMethodName");
     });
   });
 

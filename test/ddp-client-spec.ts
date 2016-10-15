@@ -6,7 +6,7 @@ import * as EJSON from "ejson";
 import "mocha";
 
 describe("DDPClient", () => {
-  
+
   describe("after onConnected()", () => {
 
     describe("on receiving {msg: \"connected\"}", () => {
