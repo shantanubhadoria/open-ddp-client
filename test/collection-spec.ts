@@ -138,29 +138,31 @@ describe("Collection", () => {
       let subscription = testCollection.collection.subscribe((collection: IDDPDocument[]) => {
         // Skip initial empty value
         for (let key in collection) {
-          let document = collection[key];
-          if (document["testField"] === "testField2Updated") {
-            expect(collection).to.eql([
-              {
-                _id: "testId1",
-                testField: "testField1",
-              },
-              {
-                _id: "testId2",
-                newArrayField: ["a", "b", "c"],
-                newField: "newFieldValue",
-                newObjectField: {
-                  a: "b",
-                  c: "d",
+          if (collection.hasOwnProperty(key)) {
+            let document = collection[key];
+            if (document["testField"] === "testField2Updated") {
+              expect(collection).to.eql([
+                {
+                  _id: "testId1",
+                  testField: "testField1",
                 },
-                testField: "testField2Updated",
-                testObject: {
-                  c: "e",
-                  f: "g",
+                {
+                  _id: "testId2",
+                  newArrayField: ["a", "b", "c"],
+                  newField: "newFieldValue",
+                  newObjectField: {
+                    a: "b",
+                    c: "d",
+                  },
+                  testField: "testField2Updated",
+                  testObject: {
+                    c: "e",
+                    f: "g",
+                  },
                 },
-              },
-            ]);
-            done();
+              ]);
+              done();
+            }
           }
         }
       });
@@ -180,7 +182,7 @@ describe("Collection", () => {
             [
               {
                 _id: "testId1",
-                testField: "testField1"
+                testField: "testField1",
               },
             ]
           );
