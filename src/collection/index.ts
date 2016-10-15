@@ -86,8 +86,10 @@ export class Collection {
       throw Error("_id '" + cloneMsgObj.id + "' not found for collection " + this.name + " in 'removed' ddp message");
     }
 
-    for(let key in fields) {
-      document[key] = fields[key];
+    for (let key in fields) {
+      if (fields.hasOwnProperty(key)) {
+        document[key] = fields[key];
+      }
     }
     this.store.set(cloneMsgObj.id, document);
     this.collection.next(this.getCollectionAsArray());
