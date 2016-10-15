@@ -8,7 +8,7 @@ ddpClient.keyValueStore = new Map<string, any>();
 
 let client = new WebSocket();
 
-client.on("connectFailed", function(error) {
+client.on("connectFailed", (error) => {
     console.log('Connect Error: ' + error.toString());
 });
 
