@@ -40,7 +40,7 @@ describe("Collection", () => {
       let subscription = testCollection.collection.subscribe((collection: Array<IDDPDocument>) => {
         // Skip initial empty value
         if (collection.length > 0) {
-          expect(collection).to.eql([{"_id":"testId1","testField":"testField1"}]);
+          expect(collection).to.eql([{"_id": "testId1", "testField": "testField1"}]);
           done();
         }
       });
@@ -52,7 +52,7 @@ describe("Collection", () => {
       let subscription = testCollection.collection.subscribe((collection: IDDPDocument[]) => {
         // Skip initial empty value
         if (collection.length > 0) {
-          expect(collection).to.eql([{"_id":"testId1","testField":"testField1"}]);
+          expect(collection).to.eql([{"_id": "testId1", "testField": "testField1"}]);
           done();
         }
       });
@@ -77,7 +77,7 @@ describe("Collection", () => {
         // Skip initial empty value
         if (collection.length > 1) {
           expect(collection).to.eql([
-            {"_id":"testId1","testField":"testField1"},
+            {"_id": "testId1", "testField": "testField1"},
             {
               _id: "testId2",
               testField: "testField2",
