@@ -34,8 +34,10 @@ export class Accounts {
     methodName: string = "login"
   ): string {
     return this.methodsObject.call(methodName, params, (result: IDDPLoginResultObject, error: IDDPErrorObject) => {
-      this.ddpClient.keyValueStore.set("loginToken", result.token);
-      this.ddpClient.keyValueStore.set("loginTokenExpires", EJSON.stringify(result.tokenExpires));
+      if (result) {
+        this.ddpClient.keyValueStore.set("loginToken", result.token);
+        this.ddpClient.keyValueStore.set("loginTokenExpires", EJSON.stringify(result.tokenExpires));
+      }
       if (resultCallback) {
         resultCallback(result, error);
       }
