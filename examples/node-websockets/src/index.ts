@@ -30,7 +30,7 @@ client.on('connect', (connection) => {
 
   ddpClient.connected();  
   
-  accounts.loginWithPassword("shantanubhadoria","hahanicetry");
+  accounts.loginWithPassword("shantanubhadoria","hahaNiceTry");
 
 });
 
