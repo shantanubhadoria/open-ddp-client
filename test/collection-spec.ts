@@ -56,25 +56,27 @@ describe("Collection", () => {
     });
 
     it(
-      "should show last value on subscription(Replay last) initialization even if there are no new messages", 
+      "should show last value on subscription(Replay last) initialization even if there are no new messages",
       (done) => {
-        let subscription = testCollection.collection.subscribe((collection: IDDPDocument[]) => {
-          // Skip initial empty value
-          if (collection.length > 0) {
-            expect(collection).to.eql(
-              [
-                {
-                  _id: "testId1",
-                  testField: "testField1",
-                },
-              ]
-            );
-            done();
+        let subscription = testCollection.collection.subscribe(
+          (collection: IDDPDocument[]) => {
+            // Skip initial empty value
+            if (collection.length > 0) {
+              expect(collection).to.eql(
+                [
+                  {
+                    _id: "testId1",
+                    testField: "testField1",
+                  },
+                ]
+              );
+              done();
+            }
           }
-        }
-      );
-      subscription.unsubscribe();
-    });
+        );
+        subscription.unsubscribe();
+      }
+    );
 
     it("should trigger on next added message with aggregated values", (done) => {
       let addedMessage: IDDPMessageDocumentAdded = {
