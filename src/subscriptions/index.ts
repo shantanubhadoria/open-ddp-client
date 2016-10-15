@@ -71,9 +71,7 @@ export class Subscriptions {
       errorCallback,
       stopCallback,
     };
-    if (readyCallback) {
-      this.subscriptionStore.set(subscriptionIdStr, storeObject);
-    }
+    this.subscriptionStore.set(subscriptionIdStr, storeObject);
 
     this.ddpClient.send(subscribeMessage);
     return subscriptionIdStr;
@@ -89,7 +87,7 @@ export class Subscriptions {
   private handleNosub(msgObj: IDDPMessageSubscriptionNosub) {
     let subscription: ISubscriptionCallStore = this.subscriptionStore.get(msgObj.id);
 
-    if (msgObj.error) {
+    if (msgObj.error && subscription.errorCallback) {
       subscription.errorCallback(
         msgObj.error,
         {
@@ -100,26 +98,30 @@ export class Subscriptions {
       );
     }
 
-    subscription.stopCallback(
-      {
-        inactive: subscription.inactive,
-        name: subscription.name,
-        ready: subscription.ready,
-      }
-    );
-    this.subscriptionStore.delete(msgObj.id);
-  }
-
-  private handleReady(msgObj: IDDPMessageSubscriptionReady) {
-    msgObj.subs.forEach(subscriptionId => {
-      let subscription = this.subscriptionStore.get(subscriptionId);
-      subscription.readyCallback(
+    if (subscription.stopCallback) {
+      subscription.stopCallback(
         {
           inactive: subscription.inactive,
           name: subscription.name,
           ready: subscription.ready,
         }
       );
+    }
+    this.subscriptionStore.delete(msgObj.id);
+  }
+
+  private handleReady(msgObj: IDDPMessageSubscriptionReady) {
+    msgObj.subs.forEach(subscriptionId => {
+      let subscription = this.subscriptionStore.get(subscriptionId);
+      if (subscription.readyCallback) {
+        subscription.readyCallback(
+          {
+            inactive: subscription.inactive,
+            name: subscription.name,
+            ready: subscription.ready,
+          }
+        );
+      }
     });
   }
 }

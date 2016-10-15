@@ -14,11 +14,11 @@ export interface IDDPMessageSubscriptionReady {
 }
 
 export interface ISubscriptionCallStore {
-  errorCallback: Function;
+  errorCallback?: Function;
   inactive: boolean;
   name: string;
   params: any[];
   ready: boolean;
-  readyCallback: Function;
-  stopCallback: Function;
+  readyCallback?: Function;
+  stopCallback?: Function;
 }
