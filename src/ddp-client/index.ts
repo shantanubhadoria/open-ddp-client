@@ -35,6 +35,7 @@ export class DDPClient implements IDDPClient {
    * subscription for connected messages received from server.
    */
   public connectedSubscription: Observable<IDDPMessage>;
+  public pingSubscription: Observable<IDDPMessage>;
 
   // Flags
   public socketConnectedStatus: boolean = false;
@@ -48,15 +49,22 @@ export class DDPClient implements IDDPClient {
   constructor() {
     this.sendMessageCallback = () => { return true; };
 
+    // Create observables for DDP
     this.ddpSubscription = this.subscription.map(value => EJSON.parse(value));
     this.connectedSubscription = this.ddpSubscription.filter(
       (msgObj: IDDPMessage) => msgObj.msg === "connected"
     );
-    this.connectedSubscription.subscribe((msgObj: IDDPMessage) => {
+    this.pingSubscription = this.ddpSubscription.filter(
+      (msgObj: IDDPMessage) => msgObj.msg === "ping"
+    );
+
+    // Dispatch observable subscriptions to their handlers
+    this.connectedSubscription.subscribe((msgObj) => {
       this.DDPConnectedStatus = true;
       this.keyValueStore.set("DDPSessionId", msgObj.session);
       this.connectedDDP();
     });
+    this.pingSubscription.subscribe(this.pong.bind(this));
   }
 
   /**
@@ -122,5 +130,9 @@ export class DDPClient implements IDDPClient {
       this.callStack.push(msgObj);
       return MessageSendStatus.deferred;
     }
+  }
+
+  private pong(msgObj: IDDPMessage) {
+    this.send({msg: "pong"});
   }
 }

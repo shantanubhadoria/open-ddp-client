@@ -10,6 +10,7 @@ export declare class DDPClient implements IDDPClient {
     subscription: Subject<string>;
     ddpSubscription: Observable<IDDPMessage>;
     connectedSubscription: Observable<IDDPMessage>;
+    pingSubscription: Observable<IDDPMessage>;
     socketConnectedStatus: boolean;
     DDPConnectedStatus: boolean;
     reauthAttemptedStatus: boolean;
@@ -21,4 +22,5 @@ export declare class DDPClient implements IDDPClient {
     connectedDDP(): void;
     dispatchCallStack(): void;
     send(msgObj: IDDPMessage): MessageSendStatus;
+    private pong(msgObj);
 }
