@@ -1,4 +1,5 @@
 import { Accounts } from "../accounts";
+
 import {
   IDDPClient,
   IDDPMessage,

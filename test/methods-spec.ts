@@ -1,9 +1,11 @@
 /// <reference path="../typings/index.d.ts" />
 import { Methods } from "../src";
-import {} from "mocha";
+
+import { prepareUniqueDDPObject } from "./utils";
+
 import { expect } from "chai";
 import * as EJSON from "ejson";
-import { prepareUniqueDDPObject } from "./utils";
+import "mocha";
 
 describe("DDPClient Methods", () => {
   describe("call without params", () => {

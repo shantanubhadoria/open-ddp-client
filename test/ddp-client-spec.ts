@@ -1,8 +1,9 @@
 /// <reference path="../typings/index.d.ts" />
 import { DDPClient, Accounts } from "../src";
-import {} from "mocha";
+
 import { expect } from "chai";
 import * as EJSON from "ejson";
+import "mocha";
 
 describe("DDPClient", () => {
 
@@ -77,7 +78,6 @@ describe("DDPClient", () => {
 
     describe("when a previous login token exists", () => {
       it("should attempt auth with token after connected", (done) => {
-        console.warn("Actually write this test once you have methods and accounts working!");
         let ddpClient = new DDPClient();
         ddpClient.keyValueStore = new Map<string, any>();
         ddpClient.keyValueStore.set("DDPSessionId", "previousSessionId");
@@ -89,11 +89,10 @@ describe("DDPClient", () => {
         ddpClient.sendMessageCallback = (message: string) => {
           // Intercepting message sent to server
           let msgObj = EJSON.parse(message);
-          console.log(message);
-          if (msgObj.msg === "connect") {
-            expect(msgObj.support).to.be.a("array");
-            expect(msgObj.version).to.be.a("string");
-            expect(msgObj.session).to.equal("previousSessionId");
+          if (msgObj.msg === "method" && msgObj.method === "login") {
+            expect(msgObj.params).to.be.a("array");
+            expect(msgObj.params[0]).to.be.a("object");
+            expect(msgObj.params[0].resume).to.equal("previousLoginToken");
             done();
           }
         };

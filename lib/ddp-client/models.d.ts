@@ -20,6 +20,7 @@ export interface IDDPMessage {
     method?: string;
     params?: Array<any>;
     result?: Object;
+    collection?: string;
     error?: IDDPErrorObject;
 }
 export interface IDDPMessageConnect {

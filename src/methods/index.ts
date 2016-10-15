@@ -1,12 +1,14 @@
 import { DDPClient } from "../ddp-client";
 import { IDDPClient, IDDPMessage } from "../ddp-client/models";
 import { ObjectId } from "../object-id";
+
 import {
   IDDPMessageMethodCall,
   IDDPMessageMethodResult,
   IDDPMessageMethodUpdated,
   IMethodCallStore,
 } from "./models";
+
 import { Observable } from "rxjs/Observable";
 
 export class Methods {
@@ -16,6 +18,7 @@ export class Methods {
   public updatedMessageSubscription: Observable<IDDPMessageMethodUpdated>;
 
   public ddpClient: IDDPClient;
+
   private resultCallbacks: Map<string, IMethodCallStore> = new Map<string, IMethodCallStore>();
   private updatedCallbacks: Map<string, IMethodCallStore> = new Map<string, IMethodCallStore>();
 
@@ -27,6 +30,7 @@ export class Methods {
       this.ddpClient = DDPClient.instance;
     }
 
+    // Create observables for method related messages
     this.resultMessageSubscription = this.ddpClient.ddpSubscription.filter(
       (msgObj: IDDPMessage) => {
         return msgObj.msg === "result";
@@ -38,7 +42,7 @@ export class Methods {
       }
     );
 
-    // Dispatch subscriptions to result handlers
+    // Dispatch observable subscriptions to their handlers
     this.resultMessageSubscription.subscribe(this.handleResult.bind(this));
     this.updatedMessageSubscription.subscribe(this.handleUpdated.bind(this));
   }

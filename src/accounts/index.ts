@@ -2,7 +2,9 @@ import { DDPClient } from "../ddp-client";
 import { IDDPClient, IDDPErrorObject } from "../ddp-client/models";
 import { Methods } from "../methods";
 import { SHA256 } from "../sha256";
+
 import { IDDPLoginResultObject } from "./models";
+
 import * as EJSON from "ejson";
 
 export class Accounts {
@@ -28,9 +30,10 @@ export class Accounts {
   public login(
     params: any[],
     resultCallback?: Function,
-    updatedCallback?: Function
+    updatedCallback?: Function,
+    methodName: string = "login"
   ): string {
-    return this.methodsObject.call("login", params, (result: IDDPLoginResultObject, error: IDDPErrorObject) => {
+    return this.methodsObject.call(methodName, params, (result: IDDPLoginResultObject, error: IDDPErrorObject) => {
       this.ddpClient.keyValueStore.set("loginToken", result.token);
       this.ddpClient.keyValueStore.set("loginTokenExpires", EJSON.stringify(result.tokenExpires));
       if (resultCallback) {
@@ -81,6 +84,32 @@ export class Accounts {
       ],
       resultCallback,
       updatedCallback,
+    );
+  }
+
+  public requestPhoneVerification(
+    phone: string,
+    resultCallback?: Function,
+    updatedCallback?: Function
+  ) {
+    return this.methodsObject.call("requestPhoneVerification", [phone], resultCallback, updatedCallback);
+  }
+
+  public verifyPhone(
+    phone: string,
+    token: string,
+    resultCallback?: Function,
+    updatedCallback?: Function
+  ) {
+    this.login(
+      [
+        phone,
+        token,
+        null,
+      ],
+      resultCallback,
+      updatedCallback,
+      "verifyPhone",
     );
   }
 

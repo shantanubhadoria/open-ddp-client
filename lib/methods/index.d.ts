@@ -5,7 +5,7 @@ export declare class Methods {
     static instance: Methods;
     resultMessageSubscription: Observable<IDDPMessageMethodResult>;
     updatedMessageSubscription: Observable<IDDPMessageMethodUpdated>;
-    private ddpClient;
+    ddpClient: IDDPClient;
     private resultCallbacks;
     private updatedCallbacks;
     constructor(ddpClient?: IDDPClient);

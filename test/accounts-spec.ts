@@ -1,9 +1,11 @@
 /// <reference path="../typings/index.d.ts" />
 import { Methods, Accounts } from "../src";
-import {} from "mocha";
+
+import { prepareUniqueDDPObject } from "./utils";
+
 import { expect } from "chai";
 import * as EJSON from "ejson";
-import { prepareUniqueDDPObject } from "./utils";
+import "mocha";
 
 describe("login()", () => {
   it("should set loginToken, loginTokenExpires in keyValueStore from result", () => {
@@ -27,5 +29,5 @@ describe("login()", () => {
 
     expect(ddpClient.keyValueStore.get("loginToken")).to.equal("testLoginToken");
     expect(ddpClient.keyValueStore.get("loginTokenExpires")).to.equal(EJSON.stringify(expireTime));
-  })
+  });
 });

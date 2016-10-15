@@ -26,9 +26,14 @@ export interface IDDPMessage {
   support?: string[];
   session?: string;
 
-  method?: string; // for methods
+  // For methods
+  method?: string;
   params?: Array<any>; // for methods and subscriptions
   result?: Object;
+
+  // For collections
+  collection?: string;
+
   error?: IDDPErrorObject;
 }
 
