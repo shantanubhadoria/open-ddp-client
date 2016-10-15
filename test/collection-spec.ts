@@ -4,6 +4,7 @@ import {
   IDDPDocument,
   IDDPMessageDocumentAdded,
   IDDPMessageDocumentChanged,
+  IDDPMessageDocumentRemoved,
 } from "../src/collection/models";
 
 import { prepareUniqueDDPObject } from "./utils";
@@ -48,7 +49,7 @@ describe("Collection", () => {
     });
 
     it("should show last value on subscription(Replay last) initialization even if there are no new messages", (done) => {
-      let subscription = testCollection.collection.subscribe((collection: Array<IDDPDocument>) => {
+      let subscription = testCollection.collection.subscribe((collection: IDDPDocument[]) => {
         // Skip initial empty value
         if (collection.length > 0) {
           expect(collection).to.eql([{"_id":"testId1","testField":"testField1"}]);
@@ -72,7 +73,7 @@ describe("Collection", () => {
           },
         },
       };
-      let subscription = testCollection.collection.subscribe((collection: Array<IDDPDocument>) => {
+      let subscription = testCollection.collection.subscribe((collection: IDDPDocument[]) => {
         // Skip initial empty value
         if (collection.length > 1) {
           expect(collection).to.eql([
@@ -112,7 +113,7 @@ describe("Collection", () => {
           },
         },
       };
-      let subscription = testCollection.collection.subscribe((collection: Array<IDDPDocument>) => {
+      let subscription = testCollection.collection.subscribe((collection: IDDPDocument[]) => {
         // Skip initial empty value
         for (let key in collection) {
           let document = collection[key];
@@ -142,23 +143,20 @@ describe("Collection", () => {
       subscription.unsubscribe();
     });
 
-    it("should delete", () => {
-      /*
-      let addedMessage2: IDDPMessageDocumentAdded = {
-        msg: "added",
+    it("should delete on removed message", (done) => {
+      let removedMessage: IDDPMessageDocumentRemoved = {
+        msg: "removed",
         collection: collectionName,
         id: "testId2",
-        fields: {
-          _id: "testId2",
-          testField: "testField2",
-        },
       };
-      ddpClient.subscription.next(EJSON.stringify(addedMessage2));
-      */
-      testCollection.collection.subscribe((value) => {
-        //expect(value).to.eql([{"_id":"testId1","testField":"testField1"},{"_id":"testId2","testField":"testField2"}]);
-        //done();
+      let subscription = testCollection.collection.subscribe((collection: IDDPDocument[]) => {
+        if (collection.length < 2) {
+          expect(collection).to.eql([{_id:"testId1", testField:"testField1"},]);
+          done();
+        }
       });
+      ddpClient.subscription.next(EJSON.stringify(removedMessage));
+      subscription.unsubscribe();
     });
   });
 });
