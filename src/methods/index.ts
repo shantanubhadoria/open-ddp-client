@@ -85,16 +85,20 @@ export class Methods {
   }
 
   public handleResult(msgObj: IDDPMessageMethodResult) {
-    let methodStoreItem = this.resultCallbacks.get(msgObj.id);
-    methodStoreItem.resultCallback(msgObj.result, msgObj.error);
-    this.resultCallbacks.delete(msgObj.id);
+    if (this.resultCallbacks.has(msgObj.id)) {
+      let methodStoreItem = this.resultCallbacks.get(msgObj.id);
+      methodStoreItem.resultCallback(msgObj.result, msgObj.error);
+      this.resultCallbacks.delete(msgObj.id);
+    }
   }
 
   public handleUpdated(msgObj: IDDPMessageMethodUpdated) {
     msgObj.methods.forEach(methodId => {
-      let methodStoreItem = this.updatedCallbacks.get(methodId);
-      methodStoreItem.updatedCallback();
-      this.updatedCallbacks.delete(methodId);
+      if (this.updatedCallbacks.has(methodId)) {
+        let methodStoreItem = this.updatedCallbacks.get(methodId);
+        methodStoreItem.updatedCallback();
+        this.updatedCallbacks.delete(methodId);
+      }
     });
   }
 }
