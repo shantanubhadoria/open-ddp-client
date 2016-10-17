@@ -11,7 +11,12 @@ import {
 } from "./models";
 
 import * as EJSON from "ejson";
+import "rxjs/add/operator/debounce";
+import "rxjs/add/operator/distinct";
+import "rxjs/add/operator/map";
+
 import { Observable } from "rxjs/Observable";
+import { timer as timerObservable } from "rxjs/observable/timer";
 import { ReplaySubject } from "rxjs/ReplaySubject";
 
 export class Collection {
@@ -68,6 +73,12 @@ export class Collection {
     this.collection.next([]);
   }
 
+  public findOne(key: string): Observable<IDDPDocument> {
+    return this.collection.map(() => {
+      return this.store.get(key);
+    }).distinct().debounce(() => timerObservable(100));
+  }
+
   private handleAdded(msgObj: IDDPMessageDocumentAdded) {
     let cloneMsgObj = EJSON.clone(msgObj);
     if (this.store.has(cloneMsgObj.id)) {
@@ -106,7 +117,9 @@ export class Collection {
   private getCollectionAsArray(): IDDPDocument[] {
     let retval: IDDPDocument[] = [];
     this.store.forEach((value: IDDPDocument, key: string) => {
-      retval.push(value);
+      let valueClone = EJSON.clone(value);
+      valueClone._id = key;
+      retval.push(valueClone);
     });
     return retval;
   }
