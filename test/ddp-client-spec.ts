@@ -63,7 +63,7 @@ describe("DDPClient", () => {
         let ddpClient = new DDPClient();
         ddpClient.keyValueStore = new Map<string, any>();
         ddpClient.keyValueStore.set("DDPSessionId", "previousSessionId");
-        ddpClient.keyValueStore.set("LoginToken", "previousLoginToken");
+        ddpClient.keyValueStore.set("loginToken", "previousLoginToken");
         // Make sure all singletons uses this DDP object for proper interception
         Accounts.instance.ddpClient = ddpClient;
         Accounts.instance.methodsObject.ddpClient = ddpClient;

@@ -100,9 +100,9 @@ export class DDPClient implements IDDPClient {
    * client
    */
   public connectedDDP(): void {
-    if (this.keyValueStore.has("LoginToken")) {
+    if (this.keyValueStore.has("loginToken")) {
       let accounts = Accounts.instance;
-      accounts.loginWithToken(this.keyValueStore.get("LoginToken"), () => {
+      accounts.loginWithToken(this.keyValueStore.get("loginToken"), () => {
         this.reauthAttemptedStatus = true;
         this.dispatchCallStack();
       });
