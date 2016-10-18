@@ -36,6 +36,17 @@ export class DDPClient implements IDDPClient {
    */
   public connectedSubscription: Observable<IDDPMessage>;
   public pingSubscription: Observable<IDDPMessage>;
+  /**
+   * userId subject 
+   * The userId() method checks if reauth is completed.
+   * If reauth is completed:
+   * * create a temporary observable, send userId to it, close the observable.
+   * If reauth is not completed. 
+   * * Return this observable. reAuthenticate() will send userId to this 
+   * subroutine when it resolves and close this observable.  
+   */
+  public preReAuthUserIdSubject: Subject<string> = new Subject<string>();
+
 
   // Flags
   public socketConnectedStatus: boolean = false;
@@ -124,10 +135,22 @@ export class DDPClient implements IDDPClient {
       return MessageSendStatus.deferred;
     }
   }
+  
+  public userId(): Subject<string> {
+    if (this.reauthAttemptedStatus) {
+      let subject = new Subject<string>();
+      subject.next(Accounts.instance.userId);
+      subject.complete(); 
+    } else {
+      return this.preReAuthUserIdSubject;
+    }
+  }
 
   private reAuthenticate(callback: Function) {
     if (this.keyValueStore.has("loginToken")) {
       Accounts.instance.loginWithToken(this.keyValueStore.get("loginToken"), () => {
+        this.preReAuthUserIdSubject.next(Accounts.instance.userId);
+        this.preReAuthUserIdSubject.complete();
         this.reauthAttemptedStatus = true;
         callback();
       });

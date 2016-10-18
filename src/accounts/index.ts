@@ -13,7 +13,7 @@ export class Accounts {
 
   public ddpClient: IDDPClient;
   public methodsObject: Methods;
-  public userId: ReplaySubject<string> = new ReplaySubject<string>();
+  public userId: string;
 
   constructor(ddpClient?: IDDPClient, methodsObject?: Methods) {
     // Useful for mocking during tests
@@ -37,7 +37,7 @@ export class Accounts {
   ): string {
     return this.methodsObject.call(methodName, params, (result: IDDPLoginResultObject, error: IDDPErrorObject) => {
       if (result) {
-        this.userId.next(result.id);
+        this.userId = result.id;
         this.ddpClient.keyValueStore.set("loginToken", result.token);
         this.ddpClient.keyValueStore.set("loginTokenExpires", EJSON.stringify(result.tokenExpires));
       }
