@@ -6,13 +6,14 @@ import { SHA256 } from "../sha256";
 import { IDDPLoginResultObject } from "./models";
 
 import * as EJSON from "ejson";
+import { ReplaySubject } from "rxjs/ReplaySubject";
 
 export class Accounts {
   public static instance: Accounts = new Accounts(); // Singleton
 
   public ddpClient: IDDPClient;
   public methodsObject: Methods;
-  public userId: string;
+  public userId: ReplaySubject<string> = new ReplaySubject<string>();
 
   constructor(ddpClient?: IDDPClient, methodsObject?: Methods) {
     // Useful for mocking during tests
@@ -36,7 +37,7 @@ export class Accounts {
   ): string {
     return this.methodsObject.call(methodName, params, (result: IDDPLoginResultObject, error: IDDPErrorObject) => {
       if (result) {
-        this.userId = result.id;
+        this.userId.next(result.id);
         this.ddpClient.keyValueStore.set("loginToken", result.token);
         this.ddpClient.keyValueStore.set("loginTokenExpires", EJSON.stringify(result.tokenExpires));
       }

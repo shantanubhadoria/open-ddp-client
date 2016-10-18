@@ -100,16 +100,9 @@ export class DDPClient implements IDDPClient {
    * client
    */
   public connectedDDP(): void {
-    if (this.keyValueStore.has("loginToken")) {
-      let accounts = Accounts.instance;
-      accounts.loginWithToken(this.keyValueStore.get("loginToken"), () => {
-        this.reauthAttemptedStatus = true;
-        this.dispatchCallStack();
-      });
-    } else {
-      this.reauthAttemptedStatus = true;
+    this.reAuthenticate(() => {
       this.dispatchCallStack();
-    }
+    });
   }
 
   public dispatchCallStack(): void {
@@ -129,6 +122,18 @@ export class DDPClient implements IDDPClient {
     } else {
       this.callStack.push(msgObj);
       return MessageSendStatus.deferred;
+    }
+  }
+
+  private reAuthenticate(callback: Function) {
+    if (this.keyValueStore.has("loginToken")) {
+      Accounts.instance.loginWithToken(this.keyValueStore.get("loginToken"), () => {
+        this.reauthAttemptedStatus = true;
+        callback();
+      });
+    } else {
+      this.reauthAttemptedStatus = true;
+      callback();
     }
   }
 
