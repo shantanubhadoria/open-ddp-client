@@ -154,6 +154,8 @@ export class DDPClient implements IDDPClient {
         callback();
       });
     } else {
+      this.preReAuthUserIdSubject.next(Accounts.instance.userId);
+      this.preReAuthUserIdSubject.complete();
       this.reauthAttemptedStatus = true;
       callback();
     }
