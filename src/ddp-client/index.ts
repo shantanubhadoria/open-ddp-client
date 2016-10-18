@@ -47,7 +47,6 @@ export class DDPClient implements IDDPClient {
    */
   public preReAuthUserIdSubject: Subject<string> = new Subject<string>();
 
-
   // Flags
   public socketConnectedStatus: boolean = false;
   public DDPConnectedStatus: boolean = false;
@@ -135,12 +134,12 @@ export class DDPClient implements IDDPClient {
       return MessageSendStatus.deferred;
     }
   }
-  
+
   public userId(): Subject<string> {
     if (this.reauthAttemptedStatus) {
       let subject = new Subject<string>();
       subject.next(Accounts.instance.userId);
-      subject.complete(); 
+      subject.complete();
     } else {
       return this.preReAuthUserIdSubject;
     }

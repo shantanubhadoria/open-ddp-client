@@ -6,7 +6,6 @@ import { SHA256 } from "../sha256";
 import { IDDPLoginResultObject } from "./models";
 
 import * as EJSON from "ejson";
-import { ReplaySubject } from "rxjs/ReplaySubject";
 
 export class Accounts {
   public static instance: Accounts = new Accounts(); // Singleton
