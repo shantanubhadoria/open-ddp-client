@@ -12,6 +12,7 @@ import * as EJSON from "ejson";
 import "rxjs/add/operator/filter";
 import "rxjs/add/operator/map";
 import { Observable } from "rxjs/Observable";
+import { Observer } from "rxjs/Observer";
 import { Subject } from "rxjs/Subject";
 
 export class DDPClient implements IDDPClient {
@@ -137,9 +138,11 @@ export class DDPClient implements IDDPClient {
 
   public userId(): Subject<string> {
     if (this.reauthAttemptedStatus) {
-      let subject = new Subject<string>();
-      subject.next(Accounts.instance.userId);
-      subject.complete();
+      let observable = Observable.create((obs: Observer<string>) => {
+        obs.next(Accounts.instance.userId);
+        obs.complete();
+      });
+      return observable;
     } else {
       return this.preReAuthUserIdSubject;
     }
