@@ -20,6 +20,7 @@ export class Subscriptions {
   public ddpClient: IDDPClient;
 
   private subscriptionStore: Map<string, ISubscriptionCallStore> = new Map<string, ISubscriptionCallStore>();
+  private initializedDefaults: boolean = false;
 
   constructor(ddpClient?: IDDPClient) {
     // This bit of code allows us to mock DDPClient with a alternate class or a localized instance of DDPClient
@@ -49,8 +50,12 @@ export class Subscriptions {
   public initialize() {
     let oldSubscriptionStore = this.subscriptionStore;
     this.subscriptionStore = new Map<string, ISubscriptionCallStore>();
-    this.subscribe("meteor.loginServiceConfiguration");
-    this.subscribe("meteor_autoupdate_clientVersions");
+
+    if (! this.initializedDefaults) {
+      this.subscribe("meteor.loginServiceConfiguration");
+      this.subscribe("meteor_autoupdate_clientVersions");
+      this.initializedDefaults = true;
+    }
     oldSubscriptionStore.forEach((value, key) => {
       this.subscribe(
         value.name,
