@@ -21,6 +21,12 @@ import { timer as timerObservable } from "rxjs/observable/timer";
 import { ReplaySubject } from "rxjs/ReplaySubject";
 
 export class Collection {
+  public static clearAll() {
+    CollectionsStore.forEach(collection, name) {
+      collection.store.clear();
+    });
+  }
+
   public collection: ReplaySubject<IDDPDocument[]> = new ReplaySubject(1);
 
   public documentSubscription: Observable<IDDPMessageDocument>;

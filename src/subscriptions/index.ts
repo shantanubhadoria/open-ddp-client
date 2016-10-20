@@ -46,6 +46,23 @@ export class Subscriptions {
     this.readyMessageSubscription.subscribe(this.handleReady.bind(this));
   }
 
+  public initialize() {
+    let oldSubscriptionStore = this.subscriptionStore;
+    this.subscriptionStore = new Map<string, ISubscriptionCallStore>;
+    this.subscribe('meteor.loginServiceConfiguration');
+    this.subscribe('meteor_autoupdate_clientVersions');
+    oldSubscriptionStore.forEach((value, key) => {
+      this.subscribe(
+        value.name,
+        value.params,
+        value.readyCallback,
+        value.errorCallback,
+        value.stopCallback
+      );
+    });
+    oldSubscriptionStore.clear();
+  }
+
   public subscribe(
     name: string,
     params?: Array<any>,

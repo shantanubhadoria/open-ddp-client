@@ -1,4 +1,6 @@
 import { Accounts } from "../accounts";
+import { Collection } from "../collection";
+import { Subscriptions } from "../subscriptions";
 
 import {
   IDDPClient,
@@ -17,6 +19,11 @@ import { Subject } from "rxjs/Subject";
 
 export class DDPClient implements IDDPClient {
   public static instance: DDPClient = new DDPClient(); // Singleton
+
+  // Default collections
+  public static AutoupdateClientVersions =  new Meteor.collection("meteor_autoupdate_clientVersions");
+  public static AccountsLoginServiceConfigurations =  new Meteor.collection("meteor_accounts_loginServiceConfigurations");
+  public static Users =  new Meteor.collection("users");
 
   // Setup pre-requisites
   public keyValueStore: IKeyValueStore;
@@ -105,6 +112,16 @@ export class DDPClient implements IDDPClient {
     this.sendMessageCallback(EJSON.stringify(connectRequest));
   }
 
+  /** 
+   * Trigger this method if the connection is closed for some reason. The reconnection must be handled by the client
+   * component. DDPClient will not attempt a reconnection by itself. 
+   */
+  public closed(): void {
+    this.socketConnectedStatus = false;
+    this.DDPConnectedStatus = false;
+    this.reauthAttemptedStatus = false;
+  }
+
   /**
    * This method is triggered when DDPClient receives a {msg: "connected"} message from the server. At this point the
    * client must attempt a reauthentication with a login token if one is found stored in the keyValueStore of the DDP 
@@ -112,16 +129,25 @@ export class DDPClient implements IDDPClient {
    */
   public connectedDDP(): void {
     this.reAuthenticate(() => {
+      Collection.clearAll(); // Clear collections data data(keep the objects)
+      Subscriptions.instance.initialize(); // (re)start default and pre-existing subscriptions
       this.dispatchCallStack();
     });
   }
 
+  /**
+   * Dispatches messages buffered during disconnected state to the server
+   */
   public dispatchCallStack(): void {
     this.callStack.forEach(msgObj => {
       this.send(msgObj);
     });
   }
 
+  /**
+   * This method will send a message using the attached sendMessageCallback if the DDPClient is initialized, else it
+   * will buffer the messages to send upon successful intialization.
+   */
   public send(msgObj: IDDPMessage): MessageSendStatus {
     if (
       (this.socketConnectedStatus && msgObj.msg === "connect")
@@ -136,6 +162,11 @@ export class DDPClient implements IDDPClient {
     }
   }
 
+  /**
+   * This method will return a observable for userId, the observable resolves immidiately if the DDPClient has been
+   * initialized, else it will resolve once reauthentication has been attempted and it either fails or returns the 
+   * logged in user id.
+   */
   public userId(): Subject<string> {
     if (this.reauthAttemptedStatus) {
       let observable = Observable.create((obs: Observer<string>) => {
