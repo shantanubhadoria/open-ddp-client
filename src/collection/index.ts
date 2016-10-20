@@ -1,5 +1,6 @@
 import { DDPClient } from "../ddp-client";
 import { IDDPClient  } from "../ddp-client/models";
+import { CollectionsStore } from "../collectionsStore";
 
 import {
   IDDPCollectionStore,
@@ -71,6 +72,12 @@ export class Collection {
 
     // Initializing first property for collection in case someone subscribes too early
     this.collection.next([]);
+
+    if (CollectionsStore.has(name)) {
+      throw new Error("Multiple initializations of the same collection", name, ".");
+    } else {
+      CollectionsStore.set(name, this);
+    }
   }
 
   public findOne(key: string): Observable<IDDPDocument> {
