@@ -1,6 +1,4 @@
 import { Accounts } from "../accounts";
-import { Collection } from "../collection";
-import { Subscriptions } from "../subscriptions";
 
 import {
   IDDPClient,
@@ -20,14 +18,10 @@ import { Subject } from "rxjs/Subject";
 export class DDPClient implements IDDPClient {
   public static instance: DDPClient = new DDPClient(); // Singleton
 
-  // Default collections
-  public static AutoupdateClientVersions =  new Meteor.collection("meteor_autoupdate_clientVersions");
-  public static AccountsLoginServiceConfigurations =  new Meteor.collection("meteor_accounts_loginServiceConfigurations");
-  public static Users =  new Meteor.collection("users");
-
   // Setup pre-requisites
   public keyValueStore: IKeyValueStore;
   public sendMessageCallback: Function;
+  public connectedDDPCallback: Function;
 
   /**
    * subscription for strings messages received by the client from the server.
@@ -129,8 +123,9 @@ export class DDPClient implements IDDPClient {
    */
   public connectedDDP(): void {
     this.reAuthenticate(() => {
-      Collection.clearAll(); // Clear collections data data(keep the objects)
-      Subscriptions.instance.initialize(); // (re)start default and pre-existing subscriptions
+      if (this.connectedDDPCallback) {
+        this.connectedDDPCallback();
+      }
       this.dispatchCallStack();
     });
   }

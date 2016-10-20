@@ -48,9 +48,9 @@ export class Subscriptions {
 
   public initialize() {
     let oldSubscriptionStore = this.subscriptionStore;
-    this.subscriptionStore = new Map<string, ISubscriptionCallStore>;
-    this.subscribe('meteor.loginServiceConfiguration');
-    this.subscribe('meteor_autoupdate_clientVersions');
+    this.subscriptionStore = new Map<string, ISubscriptionCallStore>();
+    this.subscribe("meteor.loginServiceConfiguration");
+    this.subscribe("meteor_autoupdate_clientVersions");
     oldSubscriptionStore.forEach((value, key) => {
       this.subscribe(
         value.name,

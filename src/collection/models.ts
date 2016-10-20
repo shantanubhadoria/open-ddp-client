@@ -1,12 +1,3 @@
-export interface IDDPCollectionStore {
-  set(key: string, value: IDDPDocument): IDDPCollectionStore;
-  delete(key: string): boolean;
-  get(key: string): IDDPDocument;
-
-  has(key: string): boolean;
-  forEach(callback: Function): void;
-}
-
 export interface IDDPDocument {
   _id: string;
   [key: string]: any;

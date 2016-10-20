@@ -1,9 +1,8 @@
+import { CollectionsStore } from "../collectionsStore";
 import { DDPClient } from "../ddp-client";
 import { IDDPClient  } from "../ddp-client/models";
-import { CollectionsStore } from "../collectionsStore";
 
 import {
-  IDDPCollectionStore,
   IDDPDocument,
   IDDPMessageDocument,
   IDDPMessageDocumentAdded,
@@ -22,7 +21,7 @@ import { ReplaySubject } from "rxjs/ReplaySubject";
 
 export class Collection {
   public static clearAll() {
-    CollectionsStore.forEach(collection, name) {
+    CollectionsStore.forEach((collection, name) => {
       collection.store.clear();
     });
   }
@@ -37,7 +36,7 @@ export class Collection {
   public ddpClient: IDDPClient;
 
   private name: string;
-  private store: IDDPCollectionStore = new Map<string, IDDPDocument>();
+  private store: Map<string, IDDPDocument> = new Map<string, IDDPDocument>();
 
   constructor(name: string, ddpClient?: IDDPClient) {
     // This bit of code allows us to mock DDPClient with a alternate class or a localized instance of DDPClient
@@ -80,7 +79,7 @@ export class Collection {
     this.collection.next([]);
 
     if (CollectionsStore.has(name)) {
-      throw new Error("Multiple initializations of the same collection", name, ".");
+      throw new Error("Multiple initializations of the same collection " + name + ".");
     } else {
       CollectionsStore.set(name, this);
     }
