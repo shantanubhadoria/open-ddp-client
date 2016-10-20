@@ -48,24 +48,22 @@ export class Subscriptions {
   }
 
   public initialize() {
-    let oldSubscriptionStore = this.subscriptionStore;
-    this.subscriptionStore = new Map<string, ISubscriptionCallStore>();
-
     if (! this.initializedDefaults) {
       this.subscribe("meteor.loginServiceConfiguration");
       this.subscribe("meteor_autoupdate_clientVersions");
       this.initializedDefaults = true;
     }
-    oldSubscriptionStore.forEach((value, key) => {
+    
+    this.subscriptionStore.forEach((value, key) => {
       this.subscribe(
         value.name,
         value.params,
         value.readyCallback,
         value.errorCallback,
-        value.stopCallback
+        value.stopCallback,
+        key,
       );
     });
-    oldSubscriptionStore.clear();
   }
 
   public subscribe(
@@ -73,10 +71,13 @@ export class Subscriptions {
     params?: Array<any>,
     readyCallback?: Function,
     errorCallback?: Function,
-    stopCallback?: Function
+    stopCallback?: Function,
+    subscriptionIdStr?: string,
   ) {
-    let subscriptionId: ObjectId = new ObjectId();
-    let subscriptionIdStr: string = subscriptionId.toHexString();
+    if (! subscriptionIdStr) {
+      let subscriptionId: ObjectId = new ObjectId();
+      subscriptionIdStr = subscriptionId.toHexString()
+    }
     let subscribeMessage: IDDPMessageSubscriptionSubscribe = {
       id: subscriptionIdStr,
       msg: "sub",
