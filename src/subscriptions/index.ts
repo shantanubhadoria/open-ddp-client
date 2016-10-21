@@ -76,7 +76,7 @@ export class Subscriptions {
   ) {
     if (! subscriptionIdStr) {
       let subscriptionId: ObjectId = new ObjectId();
-      subscriptionIdStr = subscriptionId.toHexString()
+      subscriptionIdStr = subscriptionId.toHexString();
     }
     let subscribeMessage: IDDPMessageSubscriptionSubscribe = {
       id: subscriptionIdStr,
