@@ -53,7 +53,7 @@ export class Subscriptions {
       this.subscribe("meteor_autoupdate_clientVersions");
       this.initializedDefaults = true;
     }
-    
+
     this.subscriptionStore.forEach((value, key) => {
       this.subscribe(
         value.name,
