@@ -3,6 +3,7 @@
 Platform agnostic ddp client to run in browser, nativescript etc.
 
 ## Badges
+[![Build Status](https://travis-ci.org/shantanubhadoria/open-ddp-client.svg?branch=master)](https://travis-ci.org/shantanubhadoria/open-ddp-client)
 [![npm version](https://badge.fury.io/js/open-ddp-client.svg)](https://badge.fury.io/js/open-ddp-client)
 [![npm](https://img.shields.io/npm/dm/open-ddp-client.svg)](https://www.npmjs.com/package/open-ddp-client)
 [![bitHound Overall Score](https://www.bithound.io/github/shantanubhadoria/open-ddp-client/badges/score.svg)](https://www.bithound.io/github/shantanubhadoria/open-ddp-client)
