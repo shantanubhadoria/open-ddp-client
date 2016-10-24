@@ -15,9 +15,9 @@ import "rxjs/add/operator/debounce";
 import "rxjs/add/operator/distinct";
 import "rxjs/add/operator/map";
 
+import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { Observable } from "rxjs/Observable";
 import { timer as timerObservable } from "rxjs/observable/timer";
-import { ReplaySubject } from "rxjs/ReplaySubject";
 
 export class Collection {
   public static clearAll() {
@@ -26,7 +26,7 @@ export class Collection {
     });
   }
 
-  public collection: ReplaySubject<IDDPDocument[]> = new ReplaySubject(1);
+  public collection: BehaviorSubject<IDDPDocument[]> = new BehaviorSubject<IDDPDocument[]>([]);
 
   public documentSubscription: Observable<IDDPMessageDocument>;
   public addedDocumentSubscription: Observable<IDDPMessageDocumentAdded>;
