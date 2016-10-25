@@ -1,3 +1,3 @@
 import { Collection } from "../collection";
 
-export const CollectionsStore: Map<string, Collection> = new Map<string, Collection>();
+export const CollectionsStore: Map<string, Collection<any>> = new Map<string, Collection<any>>();

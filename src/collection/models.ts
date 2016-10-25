@@ -12,7 +12,7 @@ export interface IDDPMessageDocumentAdded {
   msg: string;
   collection: string;
   id: string;
-  fields: IDDPDocument;
+  fields: any;
 }
 
 export interface IDDPMessageDocumentChanged {

@@ -3,7 +3,6 @@ import { DDPClient } from "../ddp-client";
 import { IDDPClient  } from "../ddp-client/models";
 
 import {
-  IDDPDocument,
   IDDPMessageDocument,
   IDDPMessageDocumentAdded,
   IDDPMessageDocumentChanged,
@@ -19,14 +18,14 @@ import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { Observable } from "rxjs/Observable";
 import { timer as timerObservable } from "rxjs/observable/timer";
 
-export class Collection {
+export class Collection<CollectionType> {
   public static clearAll() {
     CollectionsStore.forEach((collection, name) => {
       collection.store.clear();
     });
   }
 
-  public collection: BehaviorSubject<IDDPDocument[]> = new BehaviorSubject<IDDPDocument[]>([]);
+  public collection: BehaviorSubject<CollectionType[]> = new BehaviorSubject<CollectionType[]>([]);
 
   public documentSubscription: Observable<IDDPMessageDocument>;
   public addedDocumentSubscription: Observable<IDDPMessageDocumentAdded>;
@@ -36,7 +35,7 @@ export class Collection {
   public ddpClient: IDDPClient;
 
   private name: string;
-  private store: Map<string, IDDPDocument> = new Map<string, IDDPDocument>();
+  private store: Map<string, CollectionType> = new Map<string, CollectionType>();
 
   constructor(name: string, ddpClient?: IDDPClient) {
     // This bit of code allows us to mock DDPClient with a alternate class or a localized instance of DDPClient
@@ -85,7 +84,7 @@ export class Collection {
     }
   }
 
-  public findOne(key: string): Observable<IDDPDocument> {
+  public findOne(key: string): Observable<CollectionType> {
     return this.collection.map(() => {
       return this.store.get(key);
     }).distinct().debounce(() => timerObservable(100));
@@ -104,7 +103,7 @@ export class Collection {
   private handleChanged(msgObj: IDDPMessageDocumentChanged) {
     let cloneMsgObj = EJSON.clone(msgObj);
     let fields: any = cloneMsgObj.fields;
-    let document: IDDPDocument = EJSON.clone(this.store.get(cloneMsgObj.id));
+    let document: any = EJSON.clone(this.store.get(cloneMsgObj.id));
     if (!this.store.has(cloneMsgObj.id)) {
       throw Error("_id '" + cloneMsgObj.id + "' not found for collection " + this.name + " in 'removed' ddp message");
     }
@@ -126,10 +125,10 @@ export class Collection {
     this.collection.next(this.getCollectionAsArray());
   }
 
-  private getCollectionAsArray(): IDDPDocument[] {
-    let retval: IDDPDocument[] = [];
-    this.store.forEach((value: IDDPDocument, key: string) => {
-      let valueClone = EJSON.clone(value);
+  private getCollectionAsArray(): CollectionType[] {
+    let retval: CollectionType[] = [];
+    this.store.forEach((value, key) => {
+      let valueClone: any = EJSON.clone(value);
       valueClone._id = key;
       retval.push(valueClone);
     });
