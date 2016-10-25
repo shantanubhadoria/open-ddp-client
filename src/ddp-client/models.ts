@@ -29,7 +29,7 @@ export interface IDDPMessage {
   // For methods
   method?: string;
   params?: Array<any>; // for methods and subscriptions
-  result?: Object;
+  result?: any;
 
   // For collections
   collection?: string;

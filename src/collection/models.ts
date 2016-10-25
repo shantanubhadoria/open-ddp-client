@@ -19,7 +19,7 @@ export interface IDDPMessageDocumentChanged {
   msg: string;
   collection: string;
   id: string;
-  fields: Object;
+  fields: any;
 }
 
 export interface IDDPMessageDocumentRemoved {
